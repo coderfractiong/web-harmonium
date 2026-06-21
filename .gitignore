@@ -1,0 +1,9 @@
+# Secrets / local TLS — never publish these
+*.pem
+key.pem
+cert.pem
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
