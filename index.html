@@ -1,1020 +1,1402 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-    <link rel="manifest" href="manifest.json">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <meta property="og:title" content="Web Harmonium" />
-    <meta property="og:type" content="website" />
-    <meta property="og:description"
-        content="Play Harmonium using your normal computer keyboard or attach a MIDI keyboard to play" />
-    <meta property="og:image" content="https://rajaramaniyer.github.io/webharmonium.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="675" />
-    <meta property="og:url" content="https://rajaramaniyer.github.io/webharmonium.html" />
-    <link rel="shortcut icon" href="/images/icons/webharmonium_016.png" />
-    <link rel="apple-touch-icon" href="images/icons/webharmonium_072.png" />
-    <link rel="apple-touch-icon" href="images/icons/webharmonium_096.png" />
-    <link rel="apple-touch-icon" href="images/icons/webharmonium_128.png" />
-    <link rel="apple-touch-icon" href="images/icons/webharmonium_144.png" />
-    <link rel="apple-touch-icon" href="images/icons/webharmonium_152.png" />
-    <link rel="apple-touch-icon" href="images/icons/webharmonium_192.png" />
-    <link rel="apple-touch-icon" href="images/icons/webharmonium_512.png" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3758220358268980"
-        crossorigin="anonymous"></script>
-
-    <style>
-        .white {
-            fill: white;
-            stroke: black;
-            stroke-width: 1;
-            cursor: pointer;
-            margin: 2px;
-        }
-
-        .black {
-            fill: black;
-            stroke: black;
-            stroke-width: 1;
-            cursor: pointer;
-            margin: 2px;
-        }
-
-        .white1:hover {
-            fill: #9e9e9e;
-            stroke: lightblue;
-            cursor: pointer;
-            stroke-width: 1;
-
-        }
-
-        .black1:hover {
-            fill: #515151;
-            stroke: lightblue;
-            stroke-width: 1;
-
-        }
-
-        .slidecontainer {
-            width: 100%;
-            /* Width of the outside container */
-        }
-
-        /* The slider itself */
-        .slider {
-            -webkit-appearance: none;
-            /* Override default CSS styles */
-            appearance: none;
-            width: 100%;
-            /* Full-width */
-            height: 25px;
-            /* Specified height */
-            background: #d3d3d3;
-            /* Grey background */
-            outline: none;
-            /* Remove outline */
-            opacity: 0.7;
-            /* Set transparency (for mouse-over effects on hover) */
-            -webkit-transition: .2s;
-            /* 0.2 seconds transition on hover */
-            transition: opacity .2s;
-        }
-
-        /* Mouse-over effects */
-        .slider:hover {
-            opacity: 1;
-            /* Fully shown on mouse-over */
-        }
-
-        /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            /* Override default look */
-            appearance: none;
-            width: 25px;
-            /* Set a specific slider handle width */
-            height: 25px;
-            /* Slider handle height */
-            background: #4CAF50;
-            /* Green background */
-            cursor: pointer;
-            /* Cursor on hover */
-        }
-
-        .slider::-moz-range-thumb {
-            width: 25px;
-            /* Set a specific slider handle width */
-            height: 25px;
-            /* Slider handle height */
-            background: #4CAF50;
-            /* Green background */
-            cursor: pointer;
-            /* Cursor on hover */
-        }
-
-        /* CSS for toggle button */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .toggle:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked+.toggle {
-            background-color: #2196F3;
-        }
-
-        input:focus+.toggle {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked+.toggle:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-
-        /* Rounded sliders */
-        .toggle.round {
-            border-radius: 34px;
-        }
-
-        .toggle.round:before {
-            border-radius: 50%;
-        }
-
-        /* ── 3-Column Ad Layout ─────────────────────────────────── */
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Outer wrapper: left-ad | center | right-ad */
-        .page-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* Center column — all your existing content lives here */
-        .center-content {
-            flex: 0 0 auto;
-            /* don't grow or shrink */
-            width: 100%;
-            max-width: 500px;
-            /* cap width so sidebars have room */
-            min-width: 0;
-            box-sizing: border-box;
-            background-color: #EBEBEB
-        }
-
-        /* Ad column — shared styles */
-        .ad-column {
-            /* Start with the 160px base */
-            flex: 0 0 160px;
-            width: 160px;
-            min-height: 600px;
-            display: block;
-            overflow: hidden;
-        }
-
-        /* If the screen is wide enough to support 300px sidebars + 500px center */
-        @media (min-width: 1200px) {
-            .ad-column {
-                flex: 0 0 300px;
-                width: 300px;
-            }
-        }
-
-        .ad-sticky {
-            position: sticky;
-            top: 10px;
-            display: flex;
-            justify-content: center;
-            padding: 4px 0;
-            width: 100%; /* Ensures it fills the 160px or 300px column */
-        }
-
-        @media (max-width: 820px) {
-            .ad-column {
-                display: none !important;
-            }
-            /* Also explicitly hide the ad inside it to stop the script from trying to fill it */
-            .ad-column .adsbygoogle {
-                display: none !important;
-            }
-        }
-
-        /* ─────────────────────────────────────────────────────────── */
-    </style>
-    <title>Web Harmonium - developed by Rajaraman Iyer</title>
-    <script>
-        var sampleURL = 'harmonium-kannan-orig.wav';
-        var debug = false;
-
-        var AudioContext = AudioContext || webkitAudioContext,
-            context = null;
-
-        var audioBuffer = null;
-        var gainNode = null;
-        var reverbNode = null;
-        var useReverb = false;
-        var sourceNodes = new Array();
-        var sourceNodeState = new Array();
-        var keyboardMap = {
-            "s": 53, "S": 53,
-            "a": 54, "A": 54,
-            "`": 55,
-            "1": 56,
-            "q": 57, "Q": 57,
-            "2": 58,
-            "w": 59, "W": 59,
-            "e": 60, "E": 60,
-            "4": 61,
-            "r": 62, "R": 62,
-            "5": 63,
-            "t": 64, "T": 64,
-            "y": 65, "Y": 65,
-            "7": 66,
-            "u": 67, "U": 67,
-            "8": 68,
-            "i": 69, "I": 69,
-            "9": 70,
-            "o": 71, "O": 71,
-            "p": 72, "P": 72,
-            "-": 73,
-            "[": 74,
-            "=": 75,
-            "]": 76,
-            "\\": 77,
-            "'": 78,
-            ";": 79
-        }
-        var swaramMap = {
-            "s": "Ṃ", "S": "Ṃ",
-            "a": "Ṃ", "A": "Ṃ",
-            "`": "P̣",
-            "1": "Ḍ",
-            "q": "Ḍ", "Q": "Ḍ",
-            "2": "Ṇ",
-            "w": "Ṇ", "W": "Ṇ",
-            "e": "S", "E": "S",
-            "4": "R",
-            "r": "R", "R": "R",
-            "5": "G",
-            "t": "G", "T": "G",
-            "y": "M", "Y": "M",
-            "7": "M", "7": "M",
-            "u": "P", "U": "P",
-            "8": "D",
-            "i": "D", "I": "D",
-            "9": "N",
-            "o": "N", "O": "N",
-            "p": "Ṡ", "P": "Ṡ",
-            "-": "Ṙ",
-            "[": "Ṙ",
-            "=": "Ġ",
-            "]": "Ġ",
-            "\\": "Ṁ",
-            "'": "Ṁ",
-            ";": "Ṗ",
-            ",": ","
-        }
-        var notation = ""
-
-        var loopStart = 0.5,
-            loopEnd = 7.5,
-            loop = true;
-
-        var keyMap = new Array();
-        var baseKeyMap = new Array();
-        var middleC = 60;
-        var rootKey = 62;
-        var currentOctave = 3;
-        var stackCount = 0;
-        var octaveMap = [-36, -24, -12, 0, 12, 24, 36]
-        var baseKeyNames = [
-            "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
-        ];
-        var keyNames = new Array();
-
-        function getCharLength(str) {
-            // The string iterator that is used here iterates over characters,
-            //  not mere code units
-            return [...str].length;
-        }
-
-        function init() {
-            var transpose = parseInt(document.getElementById('transpose').innerText)
-
-            var startKey = (middleC - 124) + (rootKey - middleC);
-            for (i = 0; i < 128; ++i) {
-                baseKeyMap[i] = startKey++;
-                keyMap[i] = baseKeyMap[i] + transpose
-            }
-            if (debug) console.log(baseKeyMap)
-            if (debug) console.log(keyMap)
-
-            for (i = 0; i < keyMap.length; ++i) {
-                if (debug) console.log("Building keySound", i, "keyMap", keyMap[i])
-                sourceNodes[i] = null
-                setSourceNode(i)
-            }
-
-            document.getElementById('mainScreen').style.display = 'block'
-        }
-
-        function setSourceNode(i) {
-            if (sourceNodes[i] != null && sourceNodeState[i] == 1) {
-                sourceNodes[i].stop(0);
-            }
-            sourceNodeState[i] = 0
-            sourceNodes[i] = null
-            sourceNodes[i] = context.createBufferSource();
-            sourceNodes[i].connect(gainNode).connect(context.destination);
-            sourceNodes[i].buffer = audioBuffer;
-            sourceNodes[i].loop = loop;
-            sourceNodes[i].loopStart = loopStart;
-            //sourceNodes[i].loopEnd = loopEnd;
-            if (keyMap[i] != 0)
-                sourceNodes[i].detune.value = keyMap[i] * 100;
-        }
-
-        function noteOff(note) {
-            var i = note + octaveMap[currentOctave]
-            if (debug) console.log("noteOff", note, "currentOctave", currentOctave, "i", i)
-            if (i < sourceNodes.length) {
-                setSourceNode(i)
-            }
-            for (c = 1; c <= stackCount; ++c) {
-                i = note + octaveMap[currentOctave + c]
-                if (i < sourceNodes.length) {
-                    setSourceNode(i)
-                }
-            }
-        }
-
-        function noteOn(note) {
-            var i = note + octaveMap[currentOctave]
-            if (debug) console.log("noteOn", note, "currentOctave", currentOctave, "i", i)
-            if (i < sourceNodes.length && sourceNodeState[i] == 0) {
-                sourceNodes[i].start(0);
-                sourceNodeState[i] = 1
-            }
-            for (c = 1; c <= stackCount; ++c) {
-                i = note + octaveMap[currentOctave + c]
-                if (i < sourceNodes.length && sourceNodeState[i] == 0) {
-                    sourceNodes[i].start(0);
-                    sourceNodeState[i] = 1
-                }
-            }
-        }
-
-        window.onkeydown = function (event) {
-            if (!event.repeat) {
-                if (debug) console.log("keyDown", event.key, "keyboardMap", keyboardMap[event.key]);
-                if (typeof (keyboardMap[event.key]) != "undefined") {
-                    noteOn(keyboardMap[event.key]);
-                }
-            }
-        }
-
-        window.onkeyup = function (event) {
-            const key = event.key
-            if (debug) console.log("keyUp", key, "keyboardMap", keyboardMap[key]);
-            if (typeof (keyboardMap[key]) != "undefined") {
-                noteOff(keyboardMap[key]);
-            }
-
-            if (key === "Backspace" && getCharLength(notation) > 0) {
-                notation = notation.substring(0, getCharLength(notation) - 1)
-            } else if (key === "Delete") {
-                notation = ""
-            } else if (key === "Enter") {
-                console.log(notation)
-                notation = ""
-            } else if (key === "Tab") {
-                notation += ","
-            } else if (typeof (swaramMap[key]) != "undefined") {
-                notation += swaramMap[key]
-            }
-        }
-
-        function initReverbNode() {
-            reverbNode = context.createConvolver();
-
-            var request1 = new XMLHttpRequest();
-            request1.open('GET', "reverb.wav", true);
-            request1.responseType = 'arraybuffer';
-
-            request1.addEventListener('load', function () {
-                context.decodeAudioData(
-                    request1.response,
-                    function (buffer) {
-                        if (debug) console.log("Got sample. Size", buffer.length)
-                        reverbNode.buffer = buffer;
-                        reverbNode.connect(context.destination);
-                        updateReverbState(useReverb)
-                    },
-                    function (e) {
-                        console.error('ERROR: context.decodeAudioData:', e);
-                    }
-                );
-            });
-
-            request1.send();
-        }
-        function load() {
-            context = new AudioContext();
-
-            gainNode = context.createGain();
-            gainNode.gain.value = 0.3; // setting it to 30%
-            gainNode.connect(context.destination);
-
-            if (typeof (Storage) !== "undefined") {
-                if (localStorage.getItem("webharmonium.volume") != null) {
-                    document.getElementById("myRange").value = localStorage.getItem("webharmonium.volume");
-                    onGainChange();
-                }
-                if (localStorage.getItem("webharmonium.useReverb") != null) {
-                    useReverb = localStorage.getItem("webharmonium.useReverb") == "true";
-                    document.getElementById("useReverb").checked = useReverb
-                }
-                if (localStorage.getItem("webharmonium.octave") != null) {
-                    currentOctave = localStorage.getItem("webharmonium.octave")
-                    try {
-                        currentOctave = parseInt(currentOctave)
-                    } catch (err) {
-                        currentOctave = 0
-                    }
-                }
-                document.getElementById('octave').innerText = currentOctave;
-                if (localStorage.getItem("webharmonium.transpose") != null) {
-                    document.getElementById('transpose').innerText = localStorage.getItem("webharmonium.transpose");
-                    let currentSemitone = parseInt(document.getElementById('transpose').innerText);
-                    document.getElementById('rootNote').innerText = baseKeyNames[(currentSemitone >= 0) ? currentSemitone % 12 : currentSemitone + 12];
-                }
-                if (localStorage.getItem("webharmonium.stack") != null) {
-                    stackCount = localStorage.getItem("webharmonium.stack")
-                    try {
-                        stackCount = parseInt(stackCount)
-                    } catch (err) {
-                        stackCount = 0
-                    }
-                }
-                document.getElementById('stack').innerText = stackCount;
-            }
-
-            initReverbNode()
-
-            // Fetch the sample
-            var request = new XMLHttpRequest();
-            request.open('GET', sampleURL, true);
-            request.responseType = 'arraybuffer';
-
-            request.addEventListener('load', function () {
-                context.decodeAudioData(
-                    request.response,
-                    function (buffer) {
-                        if (debug) console.log("Got sample. Size", buffer.length)
-                        audioBuffer = buffer;
-                        init();
-                    },
-                    function (e) {
-                        console.error('ERROR: context.decodeAudioData:', e);
-                    }
-                );
-            });
-
-            request.send();
-            requestMIDIAccess();
-        }
-        //End of Fetch the sample
-
-        function requestMIDIAccess() {
-            try {
-                var midiInfo = document.getElementById('midiInputDevicesInfo');
-                // Start of MIDI
-                if (navigator.requestMIDIAccess) {
-                    if (midiInfo.innerText.indexOf('Supported!') == -1) {
-                        midiInfo.innerText += " Supported! "
-                    }
-                    if (debug) console.log('This browser supports WebMIDI!');
-                    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
-                } else {
-                    if (midiInfo.innerText.indexOf('Supported!') == -1) {
-                        midiInfo.innerText += " Not Supported! "
-                    }
-                    if (debug) console.log('WebMIDI is not supported in this browser.');
-                }
-            }
-            catch (err) {
-                midiInfo.innerText += " Failed! " + err
-            }
-        }
-
-        var midiAccess = null;
-        function onMIDISuccess(midiAccessReceived) {
-            if (debug) console.log("onMIDISuccess", midiAccessReceived);
-            midiAccess = midiAccessReceived;
-            var midiInputDevices = document.getElementById("midiInputDevices");
-            for (i = 0; i < midiInputDevices.length; ++i) {
-                midiInputDevices.remove(i);
-            }
-            for (var input of midiAccess.inputs.values()) {
-                if (debug) console.log("Input port [type:'" + input.type + "'] id:'" + input.id + "' manufacturer:'" + input.manufacturer + "' name:'" + input.name + "' version:'" + input.version + "'");
-                var option = document.createElement("option");
-                option.id = input.id;
-                option.text = input.name + " by " + input.manufacturer;
-                midiInputDevices.add(option);
-                input.onmidimessage = getMIDIMessage;
-            }
-        }
-
-        function onMIDIFailure(error) {
-            document.getElementById('midiInputDevicesInfo').innerText += " Failed! " + error;
-            if (debug) console.log('Could not access your MIDI devices.', error);
-        }
-
-        function getMIDIMessage(message) {
-            if (debug) console.log(message)
-            var command = message.data[0];
-            var note = message.data[1];
-            var velocity = (message.data.length > 2) ? message.data[2] : 0; // a velocity value might not be included with a noteOff command
-
-            var midiInputDevices = document.getElementById("midiInputDevices");
-            if (debug) console.log("midiDeviceId", message.target.id)
-            if (debug) console.log("selectedMidi", midiInputDevices.options[midiInputDevices.selectedIndex].id)
-            if (message.target.id == midiInputDevices.options[midiInputDevices.selectedIndex].id) {
-                if (debug) console.log("command", command, "note", note, "velocity", velocity);
-                switch (command) {
-                    case 144: // noteOn
-                        if (velocity > 0) {
-                            noteOn(note, velocity);
-                        } else {
-                            noteOff(note);
-                        }
-                        break;
-                    case 128: // noteOff
-                        noteOff(note);
-                        break;
-                    case 176: // control
-                        if (note == 7) { // volume
-                            document.getElementById("myRange").value = (100 * velocity) / 127;
-                            onGainChange();
-                        }
-                        break;
-                    // we could easily expand this switch statement to cover other types of commands such as controllers or sysex
-                }
-            }
-        }
-
-        // End of MIDI
-
-        function shiftOctave(octave) {
-            if (debug) console.log('currencOctave', currentOctave, 'octave', octave)
-            if (currentOctave + octave >= 0 && currentOctave + octave <= 6) {
-                currentOctave += octave;
-                if (debug) console.log('currencOctave changed as ', currentOctave)
-
-                if (typeof (Storage) !== "undefined") {
-                    localStorage.setItem("webharmonium.octave", currentOctave);
-                }
-            }
-            document.getElementById('octave').innerText = currentOctave
-        }
-
-        function changeStack(stack) {
-            stackCount += stack
-            if (stackCount < 0) {
-                stackCount = 0;
-            } else if (currentOctave + stackCount > 6) {
-                stackCount = 6 - currentOctave
-            }
-            document.getElementById('stack').innerText = stackCount
-
-            if (typeof (Storage) !== "undefined") {
-                localStorage.setItem("webharmonium.stack", stackCount);
-            }
-        }
-
-        function shiftSemitone(semitone) {
-            var currentSemitone = parseInt(document.getElementById('transpose').innerText);
-            if (currentSemitone + semitone >= -11 && currentSemitone + semitone <= 11) {
-                currentSemitone += semitone
-                document.getElementById('transpose').innerText = currentSemitone
-                document.getElementById('rootNote').innerText = baseKeyNames[(currentSemitone >= 0) ? currentSemitone % 12 : currentSemitone + 12];
-            }
-            if (typeof (Storage) !== "undefined") {
-                localStorage.setItem("webharmonium.transpose", document.getElementById('transpose').innerText);
-            }
-            init()
-        }
-
-        var notePlaying = 0;
-        function play(polygon) {
-            notePlaying = keyboardMap[polygon.getAttribute('key')];
-            noteOn(notePlaying)
-        }
-
-        function stop(polygon) {
-            noteOff(notePlaying)
-        }
-
-        function onGainChange() {
-            if (debug) console.log("Inside onGainChange");
-            if (typeof (Storage) !== "undefined") {
-                localStorage.setItem("webharmonium.volume", document.getElementById("myRange").value);
-            }
-            document.getElementById('volumeLevel').innerText = document.getElementById("myRange").value + "%";
-            if (gainNode != null) {
-                gainNode.gain.value = document.getElementById("myRange").value / 100;
-            }
-        }
-
-        function updateReverbState(stateValue) {
-            useReverb = stateValue
-            if (typeof (Storage) !== "undefined") {
-                localStorage.setItem("webharmonium.useReverb", (useReverb ? "true" : "false"));
-            }
-            if (useReverb) {
-                gainNode.connect(reverbNode)
-            } else {
-                try {
-                    gainNode.disconnect(reverbNode)
-                } catch (err) {
-
-                }
-            }
-        }
-
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", function () {
-                navigator.serviceWorker.register("/serviceworker.js").then(reg => {
-                    console.log("Service worker registered");
-
-                    // Check if there is an updated worker waiting to take over
-                    reg.onupdatefound = () => {
-                        const installingWorker = reg.installing;
-                        installingWorker.onstatechange = () => {
-                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                // This forces the page to reload once the new worker is active
-                                window.location.reload();
-                            }
-                        };
-                    };
-                });
-            });
-        }
-    </script>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Web Harmonium</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #1a1210;
+    font-family: 'Georgia', serif;
+    overflow-x: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    color: #d4a76a;
+}
+
+.harmonium-body {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 15px 10px;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    padding: 10px 0 8px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+.header h1 {
+    font-size: 26px;
+    font-weight: normal;
+    letter-spacing: 3px;
+    font-variant: small-caps;
+    color: #d4a76a;
+}
+.header .subtitle {
+    font-size: 11px;
+    color: #8a7050;
+    margin-top: 2px;
+}
+.header .model-name {
+    font-size: 12px;
+    color: #a08060;
+    letter-spacing: 2px;
+    margin-top: 2px;
+}
+
+/* Wooden body */
+.wood-panel {
+    background: linear-gradient(180deg, #5c3a1e 0%, #4a2e14 15%, #3d2510 50%, #4a2e14 85%, #5c3a1e 100%);
+    border-radius: 10px;
+    border: 2px solid #2a1a0a;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+    padding: 15px 12px;
+    position: relative;
+}
+.wood-panel::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px; right: 6px; bottom: 6px;
+    border: 1px solid rgba(212,167,106,0.12);
+    border-radius: 7px;
+    pointer-events: none;
+}
+
+/* STOP PANEL (the 11 knobs) */
+.stop-panel {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 10px 5px 8px;
+    background: linear-gradient(180deg, #3d2510, #2a1a0a);
+    border-radius: 6px;
+    border: 1px solid #5c3a1e;
+    flex-wrap: wrap;
+}
+
+.stop-group {
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+}
+.stop-divider {
+    width: 1px;
+    height: 50px;
+    background: #5c3a1e;
+    margin: 0 4px;
+    align-self: center;
+}
+
+.stop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    min-width: 48px;
+}
+
+.stop-knob {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #1a1008;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+/* Pulled OUT = engaged/on */
+.stop-knob.out {
+    background: radial-gradient(circle at 40% 35%, #e8c070, #a07020);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4), 0 0 10px rgba(200,160,80,0.2);
+    transform: translateY(-4px);
+}
+/* Pushed IN = disengaged/off */
+.stop-knob.in {
+    background: radial-gradient(circle at 40% 35%, #5a4a3a, #2a2018);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    transform: translateY(0px);
+}
+
+/* Groove line on knob */
+.stop-knob::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 12px; height: 2px;
+    background: #1a1008;
+    transform: translate(-50%, -50%);
+    border-radius: 1px;
+}
+
+.stop-label {
+    font-size: 8px;
+    color: #8a7050;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+.stop-label.active-label { color: #d4a76a; }
+
+/* SCALE CHANGER */
+.scale-changer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    background: linear-gradient(180deg, #3d2510, #2a1a0a);
+    border-radius: 6px;
+    border: 1px solid #5c3a1e;
+}
+
+.scale-changer-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #a08060;
+    white-space: nowrap;
+}
+
+.scale-slider-container {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+}
+
+.scale-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: linear-gradient(90deg, #2a1a0a, #3d2510, #2a1a0a);
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid #5c3a1e;
+}
+.scale-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; height: 24px;
+    background: radial-gradient(circle at 40% 35%, #d4a76a, #8b6914);
+    border-radius: 50%;
+    border: 2px solid #2a1a0a;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.scale-slider::-moz-range-thumb {
+    width: 24px; height: 24px;
+    background: radial-gradient(circle at 40% 35%, #d4a76a, #8b6914);
+    border-radius: 50%;
+    border: 2px solid #2a1a0a;
+    cursor: pointer;
+}
+
+.scale-ticks {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 10px 0;
+}
+.scale-tick {
+    font-size: 8px;
+    color: #5c3a1e;
+    text-align: center;
+    width: 20px;
+}
+.scale-tick.active-tick {
+    color: #d4a76a;
+    font-weight: bold;
+}
+
+.scale-display {
+    font-size: 18px;
+    color: #e8d5b0;
+    min-width: 40px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* BELLOWS */
+.bellows-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding: 6px 10px;
+}
+.bellows-label {
+    color: #a08060;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.bellows-pressure-bar {
+    width: 180px;
+    height: 8px;
+    background: #2a1a0a;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #3d2510;
+}
+.bellows-pressure-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a7a2e, #8bc34a);
+    width: 80%;
+    transition: width 0.15s ease;
+    border-radius: 4px;
+}
+.bellows-visual {
+    width: 100px;
+    height: 40px;
+    position: relative;
+    cursor: pointer;
+}
+.bellows-fold {
+    position: absolute;
+    height: 100%;
+    border-left: 2px solid #2a1a0a;
+    border-right: 2px solid #2a1a0a;
+    background: linear-gradient(90deg, #8b1a1a, #a52a2a, #8b1a1a);
+    transition: width 0.3s ease;
+}
+
+/* KEYBOARD */
+.keyboard-container {
+    position: relative;
+    padding: 6px;
+    background: linear-gradient(180deg, #2a1a0a, #1a1008);
+    border-radius: 5px;
+    border: 1px solid #3d2510;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.keyboard {
+    position: relative;
+    margin: 0 auto;
+}
+
+.key {
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.04s ease, box-shadow 0.04s ease;
+}
+
+.key-white {
+    background: linear-gradient(180deg, #f5f0e8 0%, #e8e0d0 60%, #d8d0c0 100%);
+    border: 1px solid #b0a890;
+    border-radius: 0 0 4px 4px;
+    z-index: 1;
+    box-shadow: -1px 0 0 #c8c0b0, 1px 0 0 #c8c0b0, 0 2px 3px rgba(0,0,0,0.3);
+}
+.key-white:active, .key-white.active {
+    background: linear-gradient(180deg, #ddd8c8 0%, #d0c8b8 60%, #c0b8a8 100%);
+    transform: translateY(2px);
+    box-shadow: -1px 0 0 #c8c0b0, 1px 0 0 #c8c0b0, 0 0 2px rgba(0,0,0,0.2);
+}
+
+.key-black {
+    background: linear-gradient(180deg, #2a2520 0%, #1a1510 40%, #0a0805 100%);
+    border: 1px solid #000;
+    border-radius: 0 0 3px 3px;
+    z-index: 2;
+    box-shadow: -1px 0 0 #3a3530, 1px 0 0 #3a3530, 0 3px 5px rgba(0,0,0,0.5);
+}
+.key-black:active, .key-black.active {
+    background: linear-gradient(180deg, #3a3530 0%, #2a2520 40%, #1a1510 100%);
+    transform: translateY(2px);
+    box-shadow: -1px 0 0 #3a3530, 1px 0 0 #3a3530, 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Key labels */
+.key-note-label {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    color: #999;
+    pointer-events: none;
+    white-space: nowrap;
+}
+.key-swaram-label {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: bold;
+    pointer-events: none;
+    white-space: nowrap;
+}
+.key-white .key-swaram-label { color: #1a5276; }
+.key-black .key-swaram-label { color: #d4a76a; bottom: 12px; font-size: 9px; }
+.key-black .key-note-label { color: #777; bottom: 2px; font-size: 7px; }
+
+.key-kb-label {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    color: #aaa;
+    pointer-events: none;
+    font-family: monospace;
+}
+.key-black .key-kb-label { color: #888; top: 2px; font-size: 7px; }
+
+.sa-dot {
+    position: absolute;
+    bottom: 34px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px; height: 5px;
+    background: #c0392b;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Active notes */
+.active-notes {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 8px;
+    min-height: 20px;
+    flex-wrap: wrap;
+}
+.active-note-badge {
+    background: #1a5276;
+    color: #e8d5b0;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    animation: fadeIn 0.1s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* CONTROLS */
+.controls-panel {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+.control-card {
+    background: linear-gradient(180deg, #3d2510, #2a1a0a);
+    border: 1px solid #5c3a1e;
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+.control-title {
+    color: #d4a76a;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-align: center;
+}
+.control-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* Volume slider */
+.volume-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5px;
+    background: #2a1a0a;
+    border-radius: 3px;
+    outline: none;
+    margin-top: 4px;
+}
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    background: radial-gradient(circle at 40% 35%, #d4a76a, #8b6914);
+    border-radius: 50%;
+    border: 2px solid #2a1a0a;
+    cursor: pointer;
+}
+.volume-slider::-moz-range-thumb {
+    width: 18px; height: 18px;
+    background: radial-gradient(circle at 40% 35%, #d4a76a, #8b6914);
+    border-radius: 50%;
+    border: 2px solid #2a1a0a;
+    cursor: pointer;
+}
+
+/* Toggle */
+.toggle-switch {
+    position: relative;
+    width: 40px; height: 20px;
+    display: inline-block;
+}
+.toggle-switch input { display: none; }
+.toggle-track {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #2a1a0a;
+    border-radius: 10px;
+    border: 1px solid #5c3a1e;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.toggle-switch input:checked + .toggle-track { background: #4a7a2e; }
+.toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    background: radial-gradient(circle at 40% 35%, #d4a76a, #8b6914);
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+.toggle-switch input:checked + .toggle-track::after { transform: translateX(20px); }
+
+/* MIDI */
+.midi-select {
+    width: 100%;
+    padding: 5px 8px;
+    background: #2a1a0a;
+    color: #d4a76a;
+    border: 1px solid #5c3a1e;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 12px;
+}
+.midi-status {
+    color: #a08060;
+    font-size: 10px;
+    text-align: center;
+    margin-top: 3px;
+}
+.midi-status.connected { color: #8bc34a; }
+
+/* Notation */
+.notation-display {
+    margin-top: 10px;
+    background: #2a1a0a;
+    border: 1px solid #5c3a1e;
+    border-radius: 5px;
+    padding: 8px 12px;
+    min-height: 36px;
+    color: #e8d5b0;
+    font-size: 15px;
+    font-family: serif;
+    letter-spacing: 1px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+.notation-hint {
+    color: #5c3a1e;
+    font-size: 9px;
+    text-align: center;
+    margin-top: 3px;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    .harmonium-body { padding: 8px 4px; }
+    .header h1 { font-size: 20px; }
+    .controls-panel { grid-template-columns: 1fr; }
+    .stop-panel { gap: 4px; }
+    .stop { min-width: 38px; }
+    .stop-knob { width: 26px; height: 26px; }
+    .stop-label { font-size: 7px; }
+    .scale-changer { flex-wrap: wrap; }
+}
+</style>
 </head>
-
 <body>
 
-    <!-- ── 3-Column Page Layout ───────────────────────────────────── -->
-    <div class="page-wrapper">
+<div class="harmonium-body">
+    <div class="header">
+        <h1>Web Harmonium</h1>
+        <div class="model-name">13/4 Scale Changer Model</div>
+        <div class="subtitle">4 Reeds (B-M-M-F) | 11 Stops | 13 Scales | Coupler | 3.5 Octaves | Ready</div>
+    </div>
 
-        <!-- LEFT AD COLUMN -->
-        <div class="ad-column">
-            <div class="ad-sticky">
-                <ins class="adsbygoogle"
-                    style="display:block; min-width:160px; max-width:300px; min-height:600px;"
-                    data-ad-client="ca-pub-3758220358268980"
-                    data-ad-slot="4252269065"
-                    data-ad-format="auto"
-                    data-full-width-responsive="false"></ins>
-                <script>
-                    // Check if the container is visible before requesting the ad
-                    const adColumn = document.querySelector('.ad-column');
-                    if (adColumn && window.getComputedStyle(adColumn).display !== 'none') {
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    }
-                </script>
-            </div>
-        </div>
+    <div class="wood-panel">
 
-        <!-- CENTER CONTENT — your original page, untouched -->
-        <div class="center-content">
-
-            <div class="w3-container w3-teal">
-                <h3>Web Harmonium</h3>
-            </div>
-
-            <div id="load" class="w3-container w3-panel">
-                <button class="w3-button w3-block w3-blue-gray"
-                    onclick="document.getElementById('load').style.display='none'; load();">Load
-                    Module</button>
-            </div>
-            <div id="mainScreen" style="display: none;">
-                <center>
-                    <svg width=294 height=110>
-                        <polygon points="0,0 14,0 14,50 21,50 21,100 0,100 0,0 " class="white" key="`"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="14,0 28,0 28,50 14,50 14,0 " class="black" key="1" onmousedown="play(this)"
-                            onmouseup="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)"
-                            ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="21,50 28,50 28,0 35,0 35,50 42,50 42,100 21,100 21,50 " class="white" key="q"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="35,0 49,0 49,50 35,50 35,0 " class="black" key="2" onmousedown="play(this)"
-                            onmouseup="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)"
-                            ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="42,50 49,50 49,0 63,0 63,100 42,100 42,50 " class="white" key="w"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="63,0 77,0 77,50 84,50 84,100 63,100 63,0 " class="white" key="e"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="77,0 91,0 91,50 77,50 77,0 " class="black" key="4" onmousedown="play(this)"
-                            onmouseup="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)"
-                            ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="84,50 91,50 91,0 98,0 98,50 105,50 105,100 84,100 84,50 " class="white" key="r"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="98,0 112,0 112,50 98,50 98,0 " class="black" key="5" onmousedown="play(this)"
-                            onmouseup="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)"
-                            ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="105,50 112,50 112,0 126,0 126,100 105,100 105,50 " class="white" key="t"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="126,0 140,0 140,50 147,50 147,100 126,100 126,0 " class="white" key="y"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="140,0 154,0 154,50 140,50 140,0 " class="black" key="7"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="147,50 154,50 154,0 161,0 161,50 168,50 168,100 147,100 147,50 " class="white"
-                            key="u" onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="161,0 175,0 175,50 161,50 161,0 " class="black" key="8"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="168,50 175,50 175,0 182,0 182,50 189,50 189,100 168,100 168,50 " class="white"
-                            key="i" onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="182,0 196,0 196,50 182,50 182,0 " class="black" key="9"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="189,50 196,50 196,0 210,0 210,100 189,100 189,50 " class="white" key="o"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="210,0 224,0 224,50 231,50 231,100 210,100 210,0 " class="white" key="p"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="224,0 238,0 238,50 224,50 224,0 " class="black" key="-"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="231,50 238,50 238,0 245,0 245,50 252,50 252,100 231,100 231,50 " class="white"
-                            key="[" onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="245,0 259,0 259,50 245,50 245,0 " class="black" key="="
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="252,50 259,50 259,0 273,0 273,100 252,100 252,50 " class="white" key="]"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-                        <polygon points="273,0 294,0 294,100 273,100 273,0 " class="white" key="\"
-                            onmousedown="play(this)" onmouseup="stop(this)" ontouchstart="play(this)"
-                            ontouchend="stop(this)" ontouchmove="console.log('touchmove',this.getAttribute('key'))"
-                            ontouchcancel="console.log('touchcancel',this.getAttribute('key'))" />
-
-                        <!--white keys-->
-                        <text x="7" y="65" fill="black" font-family="courier new" font-size="14">`</text>
-                        <text x="28" y="65" fill="black" font-family="courier new" font-size="14">q</text>
-                        <text x="49" y="65" fill="black" font-family="courier new" font-size="14">w</text>
-                        <text x="70" y="65" fill="black" font-family="courier new" font-size="14">e</text>
-                        <text x="91" y="65" fill="black" font-family="courier new" font-size="14">r</text>
-                        <text x="112" y="65" fill="black" font-family="courier new" font-size="14">t</text>
-                        <text x="133" y="65" fill="black" font-family="courier new" font-size="14">y</text>
-                        <text x="154" y="65" fill="black" font-family="courier new" font-size="14">u</text>
-                        <text x="175" y="65" fill="black" font-family="courier new" font-size="14">i</text>
-                        <text x="196" y="65" fill="black" font-family="courier new" font-size="14">o</text>
-                        <text x="217" y="65" fill="black" font-family="courier new" font-size="14">p</text>
-                        <text x="238" y="65" fill="black" font-family="courier new" font-size="14">[</text>
-                        <text x="259" y="65" fill="black" font-family="courier new" font-size="14">]</text>
-                        <text x="280" y="65" fill="black" font-family="courier new" font-size="14">\</text>
-
-                        <!--black keys-->
-                        <text x="16" y="30" fill="white" font-family="courier new" font-size="14">1</text>
-                        <text x="37" y="30" fill="white" font-family="courier new" font-size="14">2</text>
-                        <text x="79" y="30" fill="white" font-family="courier new" font-size="14">4</text>
-                        <text x="100" y="30" fill="white" font-family="courier new" font-size="14">5</text>
-                        <text x="142" y="30" fill="white" font-family="courier new" font-size="14">7</text>
-                        <text x="163" y="30" fill="white" font-family="courier new" font-size="14">8</text>
-                        <text x="184" y="30" fill="white" font-family="courier new" font-size="14">9</text>
-                        <text x="226" y="30" fill="white" font-family="courier new" font-size="14">-</text>
-                        <text x="247" y="30" fill="white" font-family="courier new" font-size="14">=</text>
-
-                        <text x="70" y="90" fill="blue" font-family="courier new" font-weight=bold
-                            font-size="14">C</text>
-                        <text x="91" y="90" fill="blue" font-family="courier new" font-weight=bold
-                            font-size="14">D</text>
-                        <text x="112" y="90" fill="blue" font-family="courier new" font-weight=bold
-                            font-size="14">E</text>
-                        <text x="133" y="90" fill="blue" font-family="courier new" font-weight=bold
-                            font-size="14">F</text>
-                        <text x="154" y="90" fill="blue" font-family="courier new" font-weight=bold
-                            font-size="14">G</text>
-                        <text x="175" y="90" fill="blue" font-family="courier new" font-weight=bold
-                            font-size="14">A</text>
-                        <text x="196" y="90" fill="blue" font-family="courier new" font-weight=bold
-                            font-size="14">B</text>
-
-                    </svg>
-                </center>
-
-                <div class="w3-container">
-
-                    <div class="w3-container w3-card w3-white">
-                        <h3 class="w3-color w3-blue-gray w3-center">Volume: <span id="volumeLevel"></span></h3>
-                        <div class="slidecontainer">
-                            <input type="range" min="1" max="100" value="30" class="slider" id="myRange"
-                                onchange="onGainChange()">
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="w3-container w3-card w3-white">
-                        <h3 class="w3-color w3-blue-gray w3-center">
-                            <span class="w3-left-align">Reverb</span>
-                            <span class="w3-right-align">
-                                <label class="switch">
-                                    <input id="useReverb" type="checkbox" onclick="updateReverbState(this.checked)">
-                                    <span class="toggle round"></span>
-                                </label>
-                            </span>
-                        </h3>
-                    </div>
-                    <hr>
-
-                    <div class="w3-container w3-card w3-white">
-                        <h3 class="w3-color w3-blue-gray w3-center">
-                            <table width="100%">
-                                <tbody>
-                                    <tr>
-                                        <td width="10%">&nbsp;</td>
-                                        <td width="80%"><span id="midiInputDevicesInfo">MIDI Keyboard</span></td>
-                                        <td align=right width="10%"><button onclick="requestMIDIAccess()"><i
-                                                    class="fa fa-refresh" style="font-size:36px;"></i></button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </h3>
-                        <div class="w3-center" width="100%">
-                            <select id="midiInputDevices" width="100%"></select>
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="w3-container w3-card w3-white">
-                        <h3 class="w3-color w3-blue-gray w3-center">Transpose - <span id='rootNote'>C</span></h3>
-
-                        <table width="100%">
-                            <tbody>
-                                <tr>
-                                    <td class="w3-center" width="10%">
-                                        <a class="w3-btn w3-grey w3-round" style="width:75px"
-                                            onclick="javascript:shiftSemitone(-1)">-</a>
-                                    </td>
-                                    <td class="w3-center" width="80%">
-                                        <h4><span id='transpose'>0</span></h4>
-                                    </td>
-                                    <td class="w3-center" width="10%">
-                                        <a class="w3-btn w3-grey w3-round" style="width:75px"
-                                            onclick="javascript:shiftSemitone(1)">+</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <hr>
-
-                    <div class="w3-container w3-card w3-white">
-                        <h3 class="w3-color w3-blue-gray w3-center">Current Octave</h3>
-
-                        <table width="100%">
-                            <tbody>
-                                <tr>
-                                    <td class="w3-center" width="10%">
-                                        <a class="w3-btn w3-grey w3-round" style="width:75px"
-                                            onclick="javascript:shiftOctave(-1)">-</a>
-                                    </td>
-                                    <td class="w3-center" width="80%">
-                                        <h4 id='octave'>4</h4>
-                                    </td>
-                                    <td class="w3-center" width="10%">
-                                        <a class="w3-btn w3-grey w3-round" style="width:75px"
-                                            onclick="javascript:shiftOctave(1)">+</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <hr>
-
-                    <div class="w3-container w3-card w3-white">
-                        <h3 class="w3-color w3-blue-gray w3-center">Additional Reeds</h3>
-
-                        <table width="100%">
-                            <tbody>
-                                <tr>
-                                    <td class="w3-center" width="10%">
-                                        <a class="w3-btn w3-grey w3-round" style="width:75px"
-                                            onclick="javascript:changeStack(-1)">-</a>
-                                    </td>
-                                    <td class="w3-center" width="80%">
-                                        <h4 id='stack'>0</h4>
-                                    </td>
-                                    <td class="w3-center" width="10%">
-                                        <a class="w3-btn w3-grey w3-round" style="width:75px"
-                                            onclick="javascript:changeStack(1)">+</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
+        <!-- 11 STOP KNOBS -->
+        <div class="stop-panel">
+            <!-- Reed stops (4) -->
+            <div class="stop-group">
+                <div class="stop" onclick="toggleStop(&#39;bass&#39;)">
+                    <div class="stop-knob out" id="stopBass"></div>
+                    <div class="stop-label active-label" id="lblBass">Bass</div>
+                </div>
+                <div class="stop" onclick="toggleStop(&#39;male1&#39;)">
+                    <div class="stop-knob out" id="stopMale1"></div>
+                    <div class="stop-label active-label" id="lblMale1">Male 1</div>
+                </div>
+                <div class="stop" onclick="toggleStop(&#39;male2&#39;)">
+                    <div class="stop-knob in" id="stopMale2"></div>
+                    <div class="stop-label" id="lblMale2">Male 2</div>
+                </div>
+                <div class="stop" onclick="toggleStop(&#39;female&#39;)">
+                    <div class="stop-knob in" id="stopFemale"></div>
+                    <div class="stop-label" id="lblFemale">Female</div>
                 </div>
             </div>
 
-        </div><!-- end .center-content -->
+            <div class="stop-divider"></div>
 
-        <!-- RIGHT AD COLUMN -->
-        <div class="ad-column">
-            <div class="ad-sticky">
-                <ins class="adsbygoogle"
-                    style="display:block; min-width:160px; max-width:300px; min-height:600px;"
-                    data-ad-client="ca-pub-3758220358268980"
-                    data-ad-slot="3724807997"
-                    data-ad-format="auto"
-                    data-full-width-responsive="false"></ins>
-                <script>
-                    // Check if the container is visible before requesting the ad
-                    if (adColumn && window.getComputedStyle(adColumn).display !== 'none') {
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    }
-                </script>
+            <!-- Tremolo (1) -->
+            <div class="stop-group">
+                <div class="stop" onclick="toggleStop(&#39;tremolo&#39;)">
+                    <div class="stop-knob in" id="stopTremolo"></div>
+                    <div class="stop-label" id="lblTremolo">Tremolo</div>
+                </div>
+            </div>
+
+            <div class="stop-divider"></div>
+
+            <!-- Drone stops (5) -->
+            <div class="stop-group">
+                <div class="stop" onclick="toggleStop(&#39;droneCs&#39;)">
+                    <div class="stop-knob in" id="stopDroneCs"></div>
+                    <div class="stop-label" id="lblDroneCs">r<br><span style="font-size:7px">F</span></div>
+                </div>
+                <div class="stop" onclick="toggleStop(&#39;droneDs&#39;)">
+                    <div class="stop-knob in" id="stopDroneDs"></div>
+                    <div class="stop-label" id="lblDroneDs">g<br><span style="font-size:7px">G</span></div>
+                </div>
+                <div class="stop" onclick="toggleStop(&#39;droneFs&#39;)">
+                    <div class="stop-knob in" id="stopDroneFs"></div>
+                    <div class="stop-label" id="lblDroneFs">m<br><span style="font-size:7px">A#</span></div>
+                </div>
+                <div class="stop" onclick="toggleStop(&#39;droneGs&#39;)">
+                    <div class="stop-knob in" id="stopDroneGs"></div>
+                    <div class="stop-label" id="lblDroneGs">d<br><span style="font-size:7px">C</span></div>
+                </div>
+                <div class="stop" onclick="toggleStop(&#39;droneAs&#39;)">
+                    <div class="stop-knob in" id="stopDroneAs"></div>
+                    <div class="stop-label" id="lblDroneAs">n<br><span style="font-size:7px">D</span></div>
+                </div>
+            </div>
+
+            <div class="stop-divider"></div>
+
+            <!-- Coupler (1) -->
+            <div class="stop-group">
+                <div class="stop" onclick="toggleStop(&#39;coupler&#39;)">
+                    <div class="stop-knob in" id="stopCoupler"></div>
+                    <div class="stop-label" id="lblCoupler">Coupler</div>
+                </div>
             </div>
         </div>
 
-    </div><!-- end .page-wrapper -->
-</body>
+        <!-- SCALE CHANGER (13 positions) -->
+        <div class="scale-changer">
+            <div class="scale-changer-title">Scale Changer</div>
+            <div class="scale-slider-container">
+                <input type="range" min="-6" max="6" value="0" step="1" class="scale-slider" id="scaleSlider" oninput="onScaleChange()">
+                <div class="scale-ticks" id="scaleTicks"><div class="scale-tick">F#</div><div class="scale-tick">G</div><div class="scale-tick">G#</div><div class="scale-tick">A</div><div class="scale-tick">A#</div><div class="scale-tick">B</div><div class="scale-tick">C</div><div class="scale-tick">C#</div><div class="scale-tick">D</div><div class="scale-tick">D#</div><div class="scale-tick active-tick">E</div><div class="scale-tick">F</div><div class="scale-tick">F#</div></div>
+            </div>
+            <div class="scale-display" id="scaleDisplay">E</div>
+        </div>
 
-</html>
+        <!-- BELLOWS -->
+        <div class="bellows-section">
+            <div class="bellows-label">Bellows</div>
+            <div class="bellows-pressure-bar">
+                <div class="bellows-pressure-fill" id="bellowsFill" style="width: 80%; background: linear-gradient(90deg, rgb(74, 122, 46), rgb(139, 195, 74));"></div>
+            </div>
+            <div class="bellows-visual" id="bellowsVisual" title="Click to pump bellows">
+                <div class="bellows-fold" id="bellowsFold" style="left: 0px; width: 80%;"></div>
+            </div>
+        </div>
+
+        <!-- KEYBOARD -->
+        <div class="keyboard-container">
+            <div class="keyboard" id="keyboard" style="width: 850px; height: 138px;"><div class="key key-white" data-midi="48" style="left: 0px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṣ</div><div class="key-note-label">E</div><div class="sa-dot"></div></div><div class="key key-black" data-midi="49" style="left: 24px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ṛ</div><div class="key-note-label">F</div></div><div class="key key-white" data-midi="50" style="left: 34px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṛ</div><div class="key-note-label">F#</div></div><div class="key key-black" data-midi="51" style="left: 58px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">g̣</div><div class="key-note-label">G</div></div><div class="key key-white" data-midi="52" style="left: 68px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">G̣</div><div class="key-note-label">G#</div></div><div class="key key-white" data-midi="53" style="left: 102px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṃ</div><div class="key-note-label">A</div><div class="key-kb-label">s</div></div><div class="key key-black" data-midi="54" style="left: 126px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ṃ</div><div class="key-note-label">A#</div><div class="key-kb-label">a</div></div><div class="key key-white" data-midi="55" style="left: 136px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">P̣</div><div class="key-note-label">B</div><div class="key-kb-label">`</div></div><div class="key key-black" data-midi="56" style="left: 160px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ḍ</div><div class="key-note-label">C</div><div class="key-kb-label">1</div></div><div class="key key-white" data-midi="57" style="left: 170px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ḍ</div><div class="key-note-label">C#</div><div class="key-kb-label">q</div></div><div class="key key-black" data-midi="58" style="left: 194px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ṇ</div><div class="key-note-label">D</div><div class="key-kb-label">2</div></div><div class="key key-white" data-midi="59" style="left: 204px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṇ</div><div class="key-note-label">D#</div><div class="key-kb-label">w</div></div><div class="key key-white" data-midi="60" style="left: 238px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">S</div><div class="key-note-label">E</div><div class="key-kb-label">e</div><div class="sa-dot"></div></div><div class="key key-black" data-midi="61" style="left: 262px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">r</div><div class="key-note-label">F</div><div class="key-kb-label">4</div></div><div class="key key-white" data-midi="62" style="left: 272px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">R</div><div class="key-note-label">F#</div><div class="key-kb-label">r</div></div><div class="key key-black" data-midi="63" style="left: 296px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">g</div><div class="key-note-label">G</div><div class="key-kb-label">5</div></div><div class="key key-white" data-midi="64" style="left: 306px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">G</div><div class="key-note-label">G#</div><div class="key-kb-label">t</div></div><div class="key key-white" data-midi="65" style="left: 340px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">M</div><div class="key-note-label">A</div><div class="key-kb-label">y</div></div><div class="key key-black" data-midi="66" style="left: 364px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">m</div><div class="key-note-label">A#</div><div class="key-kb-label">7</div></div><div class="key key-white" data-midi="67" style="left: 374px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">P</div><div class="key-note-label">B</div><div class="key-kb-label">u</div></div><div class="key key-black" data-midi="68" style="left: 398px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">d</div><div class="key-note-label">C</div><div class="key-kb-label">8</div></div><div class="key key-white" data-midi="69" style="left: 408px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">D</div><div class="key-note-label">C#</div><div class="key-kb-label">i</div></div><div class="key key-black" data-midi="70" style="left: 432px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">n</div><div class="key-note-label">D</div><div class="key-kb-label">9</div></div><div class="key key-white" data-midi="71" style="left: 442px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">N</div><div class="key-note-label">D#</div><div class="key-kb-label">o</div></div><div class="key key-white" data-midi="72" style="left: 476px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṡ</div><div class="key-note-label">E</div><div class="key-kb-label">p</div><div class="sa-dot"></div></div><div class="key key-black" data-midi="73" style="left: 500px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ṙ</div><div class="key-note-label">F</div><div class="key-kb-label">-</div></div><div class="key key-white" data-midi="74" style="left: 510px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṙ</div><div class="key-note-label">F#</div><div class="key-kb-label">[</div></div><div class="key key-black" data-midi="75" style="left: 534px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ġ</div><div class="key-note-label">G</div><div class="key-kb-label">=</div></div><div class="key key-white" data-midi="76" style="left: 544px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ġ</div><div class="key-note-label">G#</div><div class="key-kb-label">]</div></div><div class="key key-white" data-midi="77" style="left: 578px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṁ</div><div class="key-note-label">A</div><div class="key-kb-label">\</div></div><div class="key key-black" data-midi="78" style="left: 602px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ṁ</div><div class="key-note-label">A#</div></div><div class="key key-white" data-midi="79" style="left: 612px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṗ</div><div class="key-note-label">B</div></div><div class="key key-black" data-midi="80" style="left: 636px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ḋ</div><div class="key-note-label">C</div></div><div class="key key-white" data-midi="81" style="left: 646px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ḋ</div><div class="key-note-label">C#</div></div><div class="key key-black" data-midi="82" style="left: 670px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ṅ</div><div class="key-note-label">D</div></div><div class="key key-white" data-midi="83" style="left: 680px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṅ</div><div class="key-note-label">D#</div></div><div class="key key-white" data-midi="84" style="left: 714px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṡ</div><div class="key-note-label">E</div><div class="sa-dot"></div></div><div class="key key-black" data-midi="85" style="left: 738px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ṙ</div><div class="key-note-label">F</div></div><div class="key key-white" data-midi="86" style="left: 748px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṙ</div><div class="key-note-label">F#</div></div><div class="key key-black" data-midi="87" style="left: 772px; top: 0px; width: 20px; height: 84px;"><div class="key-swaram-label">ġ</div><div class="key-note-label">G</div></div><div class="key key-white" data-midi="88" style="left: 782px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ġ</div><div class="key-note-label">G#</div></div><div class="key key-white" data-midi="89" style="left: 816px; top: 0px; width: 34px; height: 136px;"><div class="key-swaram-label">Ṁ</div><div class="key-note-label">A</div></div></div>
+        </div>
+
+        <!-- Active notes -->
+        <div class="active-notes" id="activeNotes"></div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-panel">
+        <div class="control-card">
+            <div class="control-title">Volume</div>
+            <input type="range" min="0" max="100" value="50" class="volume-slider" id="volumeSlider" oninput="onVolumeChange()">
+            <div style="color:#a08060;font-size:11px;text-align:center;margin-top:3px" id="volumeDisplay">50%</div>
+        </div>
+
+        <div class="control-card">
+            <div class="control-title">Reverb</div>
+            <div class="control-row">
+                <span style="color:#a08060;font-size:11px">Off</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="reverbToggle" onchange="updateReverb(this.checked)">
+                    <span class="toggle-track"></span>
+                </label>
+                <span style="color:#a08060;font-size:11px">On</span>
+            </div>
+            <input type="range" min="0" max="100" value="30" class="volume-slider" id="reverbSlider" oninput="onReverbMixChange()" style="margin-top:6px">
+        </div>
+
+        <div class="control-card">
+            <div class="control-title">MIDI Keyboard</div>
+            <select class="midi-select" id="midiDevices"></select>
+            <div class="midi-status" id="midiStatus">Not connected</div>
+            <div style="color:#5c3a1e;font-size:9px;text-align:center;margin-top:3px">37-key maps 1:1 | Use Chrome/Edge</div>
+        </div>
+
+        <div class="control-card">
+            <div class="control-title">Keyboard Shortcuts</div>
+            <div style="color:#a08060;font-size:10px;line-height:1.5;text-align:center">
+                <b style="color:#d4a76a">White:</b> s a ` q w e r t y u i o p [ ] \<br>
+                <b style="color:#d4a76a">Black:</b> 1 2 4 5 7 8 9 - =<br>
+                <span style="color:#5c3a1e">Sa (middle) = <b style="color:#d4a76a">e</b> key</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notation -->
+    <div class="notation-display" id="notationDisplay">DDṠNDGMMGGSRRRGGMMMPDPMGRSRRPDDDNDPMPMGSRḌRRGGMMMPDMPMGRSRGMPMPDNṠṘṘṘṘĠṘṠṠṘṘĠṀĠĠṘĠṀĠṀṠṘṘṘṘṠNNṠNNNṠṘṠṘṠĠĠṘṘĠĠṘṘṘṘĠṘṠṠṘĠṀĠĠṘĠṀṀNṠĠṘNṠṘṠNṘṠNNNṠṘĠṘṘṘṠṘṠṘṘĠṘṠṘĠĠṘĠṘĠĠṀĠṘĠṀĠṀĠĠṀṀĠṘĠṀṠṠṘṘṠNNṠNṠĠṘṘṘĠṀĠṘṠṠṘNNṠNNṠNṘṠĠṘĠṠṘṠNNṠNDPMMGMDMRDMRMDMDRRRRMDRMDDMRRRRGGGGMMMMPPPPDDDDPPMGRSRGMDRRPMPDDDDNDDNDPMPDDNDPDNNDPMGRGGMPDPMPMRGRRRGRSGPMPGMGMGSRGMGRMDRRDDNDDDNDPMPPDDDNNDDPDNDMPMGRGMPPMGRRRGRGPMDMPGSGMPPMGRMMGRDMRRṂṂ</div>
+    <div class="notation-hint">Type notes for notation | Tab = comma | Enter = new line | Delete = clear</div>
+</div>
+
+<script>
+// CONFIG
+const SAMPLE_URL = 'harmonium-kannan-orig.wav';
+const REVERB_URL = 'reverb.wav';
+const ATTACK_TIME = 0.04;
+const RELEASE_TIME = 0.12;
+const BELLOWS_LFO_RATE = 0.18;
+const BELLOWS_LFO_DEPTH = 0.012;
+const TREMOLO_RATE = 6;       // Hz, amplitude tremolo
+const TREMOLO_DEPTH = 0.35;   // 0-1
+const MALE2_DETUNE = 6;       // cents, creates the reed beating
+
+// HARMONIUM LAYOUT
+const HARMONIUM_START = 48; // C3
+const HARMONIUM_END = 89;   // F6
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const IS_BLACK = [0,1,0,1,0,0,1,0,1,0,1,0];
+const SWARAM_LABELS = ['S','r','R','g','G','M','m','P','d','D','n','N'];
+const SAMPLE_ROOT = 62; // WAV is tuned to D4
+
+function getSwaramLabel(midiNote, saNote) {
+    const degree = ((midiNote - saNote) % 12 + 12) % 12;
+    const octaveNum = Math.floor((midiNote - saNote) / 12);
+    let label = SWARAM_LABELS[degree];
+    if (octaveNum < 0) label += '\u0323';
+    else if (octaveNum > 0) label += '\u0307';
+    return label;
+}
+
+// Computer keyboard -> MIDI note
+const keyboardMap = {
+    's':53,'S':53, 'a':54,'A':54,
+    '`':55, '1':56, 'q':57,'Q':57, '2':58,
+    'w':59,'W':59, 'e':60,'E':60, '4':61,
+    'r':62,'R':62, '5':63, 't':64,'T':64,
+    'y':65,'Y':65, '7':66, 'u':67,'U':67,
+    '8':68, 'i':69,'I':69, '9':70,
+    'o':71,'O':71, 'p':72,'P':72, '-':73,
+    '[':74, '=':75, ']':76, '\\':77
+};
+const midiToKB = {};
+Object.entries(keyboardMap).forEach(([k, v]) => {
+    if (!midiToKB[v] || (k === k.toLowerCase() && k.length === 1)) midiToKB[v] = k;
+});
+
+const swaramMap = {
+    's':'Ṃ','S':'Ṃ', 'a':'Ṃ','A':'Ṃ',
+    '`':'Ṗ', '1':'Ḍ', 'q':'Ḍ','Q':'Ḍ', '2':'Ṇ',
+    'w':'Ṇ','W':'Ṇ', 'e':'S','E':'S', '4':'R',
+    'r':'R','R':'R', '5':'G', 't':'G','T':'G',
+    'y':'M','Y':'M', '7':'M', 'u':'P','U':'P',
+    '8':'D', 'i':'D','I':'D', '9':'N',
+    'o':'N','O':'N', 'p':'Ṡ','P':'Ṡ', '-':'Ṙ',
+    '[':'Ṙ', '=':'Ġ', ']':'Ġ', '\\':'Ṁ'
+};
+
+// STATE
+let ctx = null;
+let audioBuffer = null;
+let masterGain = null;
+let reverbConvolver = null;
+let reverbGain = null;
+let dryGain = null;
+let bellowsLFO = null;
+let bellowsLFOGain = null;
+let tremoloLFO = null;
+let tremoloGain = null;
+let useReverb = false;
+let reverbMix = 0.3;
+
+const activeVoices = {};
+let scalePosition = 0; // -6 to +6 (13 positions)
+let bellowsPressure = 0.8;
+let notation = '';
+
+// 11 Stops state
+const stops = {
+    bass:    false,
+    male1:   true,   // on by default
+    male2:   false,
+    female:  false,
+    tremolo: false,
+    droneCs: false,
+    droneDs: false,
+    droneFs: false,
+    droneGs: false,
+    droneAs: false,
+    coupler: false
+};
+
+// Active drone voices
+const droneVoices = {};
+
+// AUDIO INIT
+function initAudio() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    masterGain = ctx.createGain();
+    masterGain.gain.value = 0.5;
+
+    dryGain = ctx.createGain();
+    dryGain.gain.value = 1.0;
+    dryGain.connect(ctx.destination);
+
+    reverbConvolver = ctx.createConvolver();
+    reverbGain = ctx.createGain();
+    reverbGain.gain.value = 0;
+    reverbConvolver.connect(reverbGain);
+    reverbGain.connect(ctx.destination);
+
+    masterGain.connect(dryGain);
+    masterGain.connect(reverbConvolver);
+
+    // Bellows LFO: subtle pitch wobble (air pressure fluctuation)
+    bellowsLFO = ctx.createOscillator();
+    bellowsLFO.type = 'sine';
+    bellowsLFO.frequency.value = BELLOWS_LFO_RATE;
+    bellowsLFOGain = ctx.createGain();
+    bellowsLFOGain.gain.value = BELLOWS_LFO_DEPTH * 100;
+    bellowsLFO.connect(bellowsLFOGain);
+    bellowsLFO.start();
+
+    // Tremolo LFO: amplitude modulation (airflow interruption)
+    tremoloLFO = ctx.createOscillator();
+    tremoloLFO.type = 'sine';
+    tremoloLFO.frequency.value = TREMOLO_RATE;
+    tremoloGain = ctx.createGain();
+    tremoloGain.gain.value = 0; // off by default
+    tremoloLFO.connect(tremoloGain);
+    tremoloLFO.start();
+
+    fetch(SAMPLE_URL)
+        .then(r => r.arrayBuffer())
+        .then(buf => ctx.decodeAudioData(buf))
+        .then(decoded => {
+            audioBuffer = decoded;
+            document.querySelector('.subtitle').textContent =
+                '4 Reeds (B-M-M-F) | 11 Stops | 13 Scales | Coupler | 3.5 Octaves | Ready';
+        })
+        .catch(e => console.error('Sample load failed:', e));
+
+    fetch(REVERB_URL)
+        .then(r => r.arrayBuffer())
+        .then(buf => ctx.decodeAudioData(buf))
+        .then(decoded => { reverbConvolver.buffer = decoded; })
+        .catch(e => console.error('Reverb load failed:', e));
+
+    loadSettings();
+    initMIDI();
+    startBellowsDecay();
+}
+
+document.addEventListener('click', initAudio, { once: true });
+document.addEventListener('keydown', initAudio, { once: true });
+document.addEventListener('touchstart', initAudio, { once: true });
+
+// VOICE CREATION
+function createVoice(midiNote, detuneOffset) {
+    if (!audioBuffer || !ctx) return null;
+
+    const source = ctx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.loop = true;
+    source.loopStart = 0.5;
+    source.detune.value = ((midiNote - SAMPLE_ROOT) * 100) + detuneOffset + (scalePosition * 100);
+    bellowsLFOGain.connect(source.detune);
+
+    // Per-voice gain envelope
+    const voiceGain = ctx.createGain();
+    voiceGain.gain.setValueAtTime(0, ctx.currentTime);
+    voiceGain.gain.linearRampToValueAtTime(bellowsPressure, ctx.currentTime + ATTACK_TIME);
+
+    source.connect(voiceGain);
+
+    // If tremolo is on, route through tremolo modulation
+    if (stops.tremolo) {
+        const tremoloNode = ctx.createGain();
+        tremoloNode.gain.value = 1.0;
+        // Connect tremolo LFO to this gain node for amplitude modulation
+        const tGain = ctx.createGain();
+        tGain.gain.value = TREMOLO_DEPTH;
+        tremoloLFO.connect(tGain);
+        tGain.connect(tremoloNode.gain);
+        voiceGain.connect(tremoloNode);
+        tremoloNode.connect(masterGain);
+    } else {
+        voiceGain.connect(masterGain);
+    }
+
+    source.start(0);
+    return { source, voiceGain };
+}
+
+// NOTE ON / OFF (absolute MIDI notes)
+function noteOn(midiNote) {
+    if (!audioBuffer) return;
+    if (midiNote < 20 || midiNote > 108) return;
+    if (activeVoices[midiNote]) return;
+
+    const voices = [];
+
+    // Bass reed (-12 semitones from note)
+    if (stops.bass) voices.push(createVoice(midiNote - 12, 3));
+
+    // Male 1 reed (primary, 0 cents)
+    if (stops.male1) voices.push(createVoice(midiNote, 0));
+
+    // Male 2 reed (slight detune for natural beating)
+    if (stops.male2) voices.push(createVoice(midiNote, MALE2_DETUNE));
+
+    // Female reed (+12 semitones)
+    if (stops.female) voices.push(createVoice(midiNote + 12, -2));
+
+    // At least one reed must sound
+    if (voices.length === 0) voices.push(createVoice(midiNote, 0));
+
+    activeVoices[midiNote] = voices;
+
+    // Coupler: also trigger the note one octave up
+    if (stops.coupler && !activeVoices[midiNote + 12]) {
+        const couplerVoices = [];
+        if (stops.bass) couplerVoices.push(createVoice(midiNote, 3)); // bass of +12 = original note
+        if (stops.male1) couplerVoices.push(createVoice(midiNote + 12, 0));
+        if (stops.male2) couplerVoices.push(createVoice(midiNote + 12, MALE2_DETUNE));
+        if (stops.female) couplerVoices.push(createVoice(midiNote + 24, -2));
+        if (couplerVoices.length === 0) couplerVoices.push(createVoice(midiNote + 12, 0));
+        activeVoices[midiNote + 12] = couplerVoices;
+        activeVoices[midiNote + 12]._coupler = true; // mark as coupler-generated
+        highlightKey(midiNote + 12, true);
+    }
+
+    pumpBellows();
+    updateActiveNotesDisplay();
+    highlightKey(midiNote, true);
+}
+
+function noteOff(midiNote) {
+    releaseVoice(midiNote);
+
+    // Coupler: also release the octave-up note if it was coupler-generated
+    if (stops.coupler && activeVoices[midiNote + 12] && activeVoices[midiNote + 12]._coupler) {
+        releaseVoice(midiNote + 12);
+    }
+
+    updateActiveNotesDisplay();
+}
+
+function releaseVoice(midiNote) {
+    const voices = activeVoices[midiNote];
+    if (!voices) return;
+    const now = ctx.currentTime;
+    voices.forEach(v => {
+        if (!v || !v.voiceGain) return;
+        v.voiceGain.gain.cancelScheduledValues(now);
+        v.voiceGain.gain.setValueAtTime(v.voiceGain.gain.value, now);
+        v.voiceGain.gain.linearRampToValueAtTime(0, now + RELEASE_TIME);
+        v.source.stop(now + RELEASE_TIME + 0.01);
+    });
+    delete activeVoices[midiNote];
+    highlightKey(midiNote, false);
+}
+
+function stopAllNotes() {
+    Object.keys(activeVoices).forEach(id => releaseVoice(parseInt(id)));
+    updateActiveNotesDisplay();
+    document.querySelectorAll('.key.active').forEach(el => el.classList.remove('active'));
+}
+
+// BELLOWS
+function pumpBellows() {
+    bellowsPressure = Math.min(1.0, bellowsPressure + 0.03);
+    updateBellowsVisual();
+}
+
+function startBellowsDecay() {
+    setInterval(() => {
+        const noteCount = Object.keys(activeVoices).length + Object.keys(droneVoices).length;
+        if (noteCount > 0) {
+            bellowsPressure = Math.max(0.35, bellowsPressure - 0.001 * noteCount);
+        } else {
+            bellowsPressure = Math.min(0.8, bellowsPressure + 0.005);
+        }
+        updateBellowsVisual();
+        // Update playing voice volumes
+        Object.values(activeVoices).forEach(voices => {
+            voices.forEach(v => {
+                if (v && v.voiceGain) v.voiceGain.gain.setTargetAtTime(bellowsPressure, ctx.currentTime, 0.1);
+            });
+        });
+        Object.values(droneVoices).forEach(v => {
+            if (v && v.voiceGain) v.voiceGain.gain.setTargetAtTime(bellowsPressure * 0.3, ctx.currentTime, 0.1);
+        });
+    }, 50);
+}
+
+function updateBellowsVisual() {
+    const fill = document.getElementById('bellowsFill');
+    const fold = document.getElementById('bellowsFold');
+    if (fill) fill.style.width = (bellowsPressure * 100) + '%';
+    if (fold) fold.style.width = (bellowsPressure * 100) + '%';
+    if (fill) {
+        if (bellowsPressure < 0.35) fill.style.background = 'linear-gradient(90deg, #c0392b, #e74c3c)';
+        else if (bellowsPressure < 0.55) fill.style.background = 'linear-gradient(90deg, #d4a76a, #e8b84a)';
+        else fill.style.background = 'linear-gradient(90deg, #4a7a2e, #8bc34a)';
+    }
+}
+
+document.getElementById('bellowsVisual').addEventListener('mousedown', () => {
+    initAudio();
+    bellowsPressure = 1.0;
+    updateBellowsVisual();
+});
+
+// 11 STOPS
+function toggleStop(name) {
+    stops[name] = !stops[name];
+
+    // Update knob visual
+    const knob = document.getElementById('stop' + name.charAt(0).toUpperCase() + name.slice(1));
+    const label = document.getElementById('lbl' + name.charAt(0).toUpperCase() + name.slice(1));
+    if (knob) knob.className = 'stop-knob ' + (stops[name] ? 'out' : 'in');
+    if (label) label.className = 'stop-label' + (stops[name] ? ' active-label' : '');
+
+    // Handle drone stops
+    if (name.startsWith('drone')) {
+        handleDroneToggle(name);
+        saveSettings();
+        return;
+    }
+
+    // Handle coupler: re-voice playing notes
+    if (name === 'coupler') {
+        // Stop all and let user re-trigger
+        stopAllNotes();
+        saveSettings();
+        return;
+    }
+
+    // Reed/tremolo change: re-voice currently playing notes
+    const playing = Object.keys(activeVoices).map(Number);
+    playing.forEach(midiNote => {
+        const voices = activeVoices[midiNote];
+        const wasCoupler = voices && voices._coupler;
+        if (voices) {
+            voices.forEach(v => {
+                if (v && v.voiceGain) {
+                    v.voiceGain.gain.setValueAtTime(0, ctx.currentTime);
+                    v.source.stop(ctx.currentTime + 0.01);
+                }
+            });
+        }
+        delete activeVoices[midiNote];
+
+        if (!wasCoupler) {
+            // Re-create voices with new stop config
+            const newVoices = [];
+            if (stops.bass) newVoices.push(createVoice(midiNote - 12, 3));
+            if (stops.male1) newVoices.push(createVoice(midiNote, 0));
+            if (stops.male2) newVoices.push(createVoice(midiNote, MALE2_DETUNE));
+            if (stops.female) newVoices.push(createVoice(midiNote + 12, -2));
+            if (newVoices.length === 0) newVoices.push(createVoice(midiNote, 0));
+            activeVoices[midiNote] = newVoices;
+
+            // Re-create coupler companion if coupler is on
+            if (stops.coupler && !activeVoices[midiNote + 12]) {
+                const cVoices = [];
+                if (stops.bass) cVoices.push(createVoice(midiNote, 3));
+                if (stops.male1) cVoices.push(createVoice(midiNote + 12, 0));
+                if (stops.male2) cVoices.push(createVoice(midiNote + 12, MALE2_DETUNE));
+                if (stops.female) cVoices.push(createVoice(midiNote + 24, -2));
+                if (cVoices.length === 0) cVoices.push(createVoice(midiNote + 12, 0));
+                activeVoices[midiNote + 12] = cVoices;
+                activeVoices[midiNote + 12]._coupler = true;
+                highlightKey(midiNote + 12, true);
+            }
+        }
+    });
+
+    saveSettings();
+}
+
+// DRONE MANAGEMENT
+// Drone notes: black keys relative to Sa
+// droneCs = Sa+1 (C#), droneDs = Sa+3 (D#), droneFs = Sa+6 (F#), droneGs = Sa+8 (G#), droneAs = Sa+10 (A#)
+const DRONE_SEMITONES = {
+    droneCs: 1,
+    droneDs: 3,
+    droneFs: 6,
+    droneGs: 8,
+    droneAs: 10
+};
+
+function handleDroneToggle(name) {
+    if (!ctx || !audioBuffer) { stops[name] = false; return; }
+
+    if (stops[name]) {
+        // Start drone
+        const saNote = 60 + scalePosition;
+        const midiNote = saNote + DRONE_SEMITONES[name];
+        const source = ctx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.loop = true;
+        source.loopStart = 0.5;
+        source.detune.value = (midiNote - SAMPLE_ROOT) * 100;
+        bellowsLFOGain.connect(source.detune);
+
+        const voiceGain = ctx.createGain();
+        voiceGain.gain.setValueAtTime(0, ctx.currentTime);
+        voiceGain.gain.linearRampToValueAtTime(bellowsPressure * 0.25, ctx.currentTime + 0.3);
+        source.connect(voiceGain);
+        voiceGain.connect(masterGain);
+        source.start(0);
+        droneVoices[name] = { source, voiceGain };
+    } else {
+        // Stop drone
+        const v = droneVoices[name];
+        if (v) {
+            v.voiceGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.2);
+            v.source.stop(ctx.currentTime + 0.25);
+            delete droneVoices[name];
+        }
+    }
+}
+
+function restartDrones() {
+    // Restart any active drones at new scale position
+    Object.keys(DRONE_SEMITONES).forEach(name => {
+        if (stops[name]) {
+            const v = droneVoices[name];
+            if (v) {
+                v.voiceGain.gain.setValueAtTime(0, ctx.currentTime);
+                v.source.stop(ctx.currentTime + 0.01);
+                delete droneVoices[name];
+            }
+            handleDroneToggle(name);
+        }
+    });
+}
+
+// SCALE CHANGER
+function onScaleChange() {
+    stopAllNotes();
+    scalePosition = parseInt(document.getElementById('scaleSlider').value);
+    const noteIdx = ((scalePosition % 12) + 12) % 12;
+    document.getElementById('scaleDisplay').textContent = NOTE_NAMES[noteIdx];
+    buildScaleTicks();
+    buildKeyboard();
+    updateDroneLabels();
+    restartDrones();
+    saveSettings();
+}
+
+function buildScaleTicks() {
+    const container = document.getElementById('scaleTicks');
+    container.innerHTML = '';
+    for (let i = -6; i <= 6; i++) {
+        const tick = document.createElement('div');
+        tick.className = 'scale-tick' + (i === scalePosition ? ' active-tick' : '');
+        const noteIdx = ((i % 12) + 12) % 12;
+        tick.textContent = NOTE_NAMES[noteIdx];
+        container.appendChild(tick);
+    }
+}
+
+function updateDroneLabels() {
+    const saNote = 60 + scalePosition;
+    Object.entries(DRONE_SEMITONES).forEach(([name, semi]) => {
+        const midiNote = saNote + semi;
+        const noteIdx = midiNote % 12;
+        const swaramLabel = getSwaramLabel(midiNote, saNote);
+        const lbl = document.getElementById('lbl' + name.charAt(0).toUpperCase() + name.slice(1));
+        if (lbl) lbl.innerHTML = swaramLabel + '<br><span style="font-size:7px">' + NOTE_NAMES[noteIdx] + '</span>';
+    });
+}
+
+// BUILD KEYBOARD
+function buildKeyboard() {
+    const kb = document.getElementById('keyboard');
+    kb.innerHTML = '';
+    const saNote = 60; // Sa always on same physical key; scale changer transposes pitch
+
+    const containerWidth = kb.parentElement.clientWidth - 12;
+    const numWhiteKeys = 25;
+    const whiteWidth = Math.min(34, Math.floor(containerWidth / numWhiteKeys));
+    const blackWidth = Math.round(whiteWidth * 0.6);
+    const whiteHeight = Math.min(160, Math.round(whiteWidth * 4));
+    const blackHeight = Math.round(whiteHeight * 0.62);
+
+    const totalWidth = numWhiteKeys * whiteWidth;
+    kb.style.width = totalWidth + 'px';
+    kb.style.height = (whiteHeight + 2) + 'px';
+
+    const whitePositions = {};
+    let wIdx = 0;
+    for (let midi = HARMONIUM_START; midi <= HARMONIUM_END; midi++) {
+        if (!IS_BLACK[midi % 12]) { whitePositions[midi] = wIdx++; }
+    }
+
+    for (let midi = HARMONIUM_START; midi <= HARMONIUM_END; midi++) {
+        const noteInOctave = midi % 12;
+        const isBlack = IS_BLACK[noteInOctave];
+        const swaramLabel = getSwaramLabel(midi, saNote);
+        const kbShortcut = midiToKB[midi] || '';
+        const isSa = ((midi - saNote) % 12 + 12) % 12 === 0;
+
+        const el = document.createElement('div');
+        el.className = 'key ' + (isBlack ? 'key-black' : 'key-white');
+        el.dataset.midi = midi;
+
+        if (isBlack) {
+            let leftWhite = midi - 1;
+            while (IS_BLACK[leftWhite % 12]) leftWhite--;
+            const xPos = (whitePositions[leftWhite] + 1) * whiteWidth - blackWidth / 2;
+            el.style.left = xPos + 'px';
+            el.style.top = '0px';
+            el.style.width = blackWidth + 'px';
+            el.style.height = blackHeight + 'px';
+        } else {
+            el.style.left = (whitePositions[midi] * whiteWidth) + 'px';
+            el.style.top = '0px';
+            el.style.width = whiteWidth + 'px';
+            el.style.height = whiteHeight + 'px';
+        }
+
+        const sLabel = document.createElement('div');
+        sLabel.className = 'key-swaram-label';
+        sLabel.textContent = swaramLabel;
+        el.appendChild(sLabel);
+
+        const nLabel = document.createElement('div');
+        nLabel.className = 'key-note-label';
+        nLabel.textContent = NOTE_NAMES[((noteInOctave + scalePosition) % 12 + 12) % 12];
+        el.appendChild(nLabel);
+
+        if (kbShortcut) {
+            const kLabel = document.createElement('div');
+            kLabel.className = 'key-kb-label';
+            kLabel.textContent = kbShortcut;
+            el.appendChild(kLabel);
+        }
+
+        if (isSa && !isBlack) {
+            const dot = document.createElement('div');
+            dot.className = 'sa-dot';
+            el.appendChild(dot);
+        }
+
+        el.addEventListener('mousedown', (e) => { e.preventDefault(); initAudio(); noteOn(midi); });
+        el.addEventListener('mouseup', () => noteOff(midi));
+        el.addEventListener('mouseleave', () => noteOff(midi));
+        el.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); noteOn(midi); }, { passive: false });
+        el.addEventListener('touchend', (e) => { e.preventDefault(); noteOff(midi); });
+        el.addEventListener('touchcancel', () => noteOff(midi));
+
+        kb.appendChild(el);
+    }
+}
+
+function highlightKey(midiNote, on) {
+    const el = document.querySelector(`.key[data-midi="${midiNote}"]`);
+    if (el) { if (on) el.classList.add('active'); else el.classList.remove('active'); }
+}
+
+function updateActiveNotesDisplay() {
+    const container = document.getElementById('activeNotes');
+    container.innerHTML = '';
+    const saNote = 60; // fixed, Sa key position doesn't change
+    Object.keys(activeVoices).forEach(id => {
+        const midi = parseInt(id);
+        const badge = document.createElement('span');
+        badge.className = 'active-note-badge';
+        badge.textContent = getSwaramLabel(midi, saNote);
+        container.appendChild(badge);
+    });
+}
+
+// CONTROLS
+function onVolumeChange() {
+    const val = document.getElementById('volumeSlider').value;
+    document.getElementById('volumeDisplay').textContent = val + '%';
+    if (masterGain) masterGain.gain.setTargetAtTime(val / 100, ctx.currentTime, 0.05);
+    saveSettings();
+}
+
+function updateReverb(on) {
+    useReverb = on;
+    if (reverbGain) reverbGain.gain.setTargetAtTime(on ? reverbMix : 0, ctx.currentTime, 0.1);
+    saveSettings();
+}
+
+function onReverbMixChange() {
+    reverbMix = document.getElementById('reverbSlider').value / 100;
+    if (useReverb && reverbGain) reverbGain.gain.setTargetAtTime(reverbMix, ctx.currentTime, 0.1);
+    saveSettings();
+}
+
+// KEYBOARD INPUT
+window.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    initAudio();
+    const midiNote = keyboardMap[e.key];
+    if (midiNote !== undefined) { e.preventDefault(); noteOn(midiNote); }
+});
+
+window.addEventListener('keyup', (e) => {
+    const key = e.key;
+    const midiNote = keyboardMap[key];
+    if (midiNote !== undefined) { e.preventDefault(); noteOff(midiNote); }
+
+    if (key === 'Backspace' && notation.length > 0) notation = [...notation].slice(0, -1).join('');
+    else if (key === 'Delete') notation = '';
+    else if (key === 'Enter') notation += '\n';
+    else if (key === 'Tab') { e.preventDefault(); notation += ' , '; }
+    else if (swaramMap[key]) notation += swaramMap[key];
+    document.getElementById('notationDisplay').textContent = notation;
+});
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Tab') e.preventDefault();
+    if (e.key === ' ') {
+        bellowsPressure = Math.min(1.0, bellowsPressure + 0.2);
+        updateBellowsVisual();
+    }
+});
+
+// MIDI
+function initMIDI() {
+    const status = document.getElementById('midiStatus');
+    if (!navigator.requestMIDIAccess) { status.textContent = 'MIDI not supported (use Chrome/Edge)'; return; }
+    navigator.requestMIDIAccess()
+        .then(access => {
+            const select = document.getElementById('midiDevices');
+            function updateDevices() {
+                select.innerHTML = '';
+                for (const input of access.inputs.values()) {
+                    const opt = document.createElement('option');
+                    opt.value = input.id;
+                    opt.textContent = input.name + (input.manufacturer ? ' (' + input.manufacturer + ')' : '');
+                    select.appendChild(opt);
+                    input.onmidimessage = onMIDIMessage;
+                }
+                if (select.options.length === 0) {
+                    select.innerHTML = '<option>No MIDI devices, plug in & refresh</option>';
+                    status.textContent = 'No devices';
+                    status.className = 'midi-status';
+                } else {
+                    status.textContent = select.options.length + ' device(s)';
+                    status.className = 'midi-status connected';
+                }
+            }
+            updateDevices();
+            access.onstatechange = updateDevices;
+        })
+        .catch(err => { status.textContent = 'MIDI error: ' + err.message; });
+}
+
+function onMIDIMessage(msg) {
+    const [cmd, note, vel] = msg.data;
+    const select = document.getElementById('midiDevices');
+    if (msg.target.id !== select.value) return;
+    if (cmd === 144 && vel > 0) noteOn(note);
+    else if (cmd === 128 || (cmd === 144 && vel === 0)) noteOff(note);
+    else if (cmd === 176 && note === 7) {
+        document.getElementById('volumeSlider').value = Math.round((100 * vel) / 127);
+        onVolumeChange();
+    }
+}
+
+// PERSISTENCE
+function saveSettings() {
+    try {
+        localStorage.setItem('wh2.vol', document.getElementById('volumeSlider').value);
+        localStorage.setItem('wh2.rev', useReverb);
+        localStorage.setItem('wh2.revMix', document.getElementById('reverbSlider').value);
+        localStorage.setItem('wh2.scale', scalePosition);
+        localStorage.setItem('wh2.stops', JSON.stringify(stops));
+    } catch(e) {}
+}
+
+function loadSettings() {
+    try {
+        const vol = localStorage.getItem('wh2.vol');
+        if (vol !== null) { document.getElementById('volumeSlider').value = vol; onVolumeChange(); }
+        const rev = localStorage.getItem('wh2.rev');
+        if (rev !== null) { useReverb = rev === 'true'; document.getElementById('reverbToggle').checked = useReverb; updateReverb(useReverb); }
+        const revMix = localStorage.getItem('wh2.revMix');
+        if (revMix !== null) { document.getElementById('reverbSlider').value = revMix; reverbMix = revMix / 100; }
+        const sc = localStorage.getItem('wh2.scale');
+        if (sc !== null) {
+            scalePosition = parseInt(sc) || 0;
+            document.getElementById('scaleSlider').value = scalePosition;
+            const noteIdx = ((scalePosition % 12) + 12) % 12;
+            document.getElementById('scaleDisplay').textContent = NOTE_NAMES[noteIdx];
+            buildScaleTicks();
+            buildKeyboard();
+            updateDroneLabels();
+        }
+        const st = localStorage.getItem('wh2.stops');
+        if (st) {
+            const saved = JSON.parse(st);
+            Object.keys(saved).forEach(k => {
+                if (k in stops) {
+                    stops[k] = saved[k];
+                    const knob = document.getElementById('stop' + k.charAt(0).toUpperCase() + k.slice(1));
+                    const lbl = document.getElementById('lbl' + k.charAt(0).toUpperCase() + k.slice(1));
+                    if (knob) knob.className = 'stop-knob ' + (saved[k] ? 'out' : 'in');
+                    if (lbl) lbl.className = 'stop-label' + (saved[k] ? ' active-label' : '');
+                }
+            });
+        }
+    } catch(e) {}
+}
+
+// INIT
+buildScaleTicks();
+buildKeyboard();
+updateDroneLabels();
+window.addEventListener('resize', buildKeyboard);
+</script>
+
+
+</body></html>
