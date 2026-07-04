@@ -16,6 +16,13 @@ instrument rather than a synth.
 - Computer-keyboard and Web MIDI input
 - Swaram notation display with persistence via localStorage
 
+## Using a MIDI keyboard
+
+Open the site in Chrome or Edge (Web MIDI support is required), plug in any
+MIDI keyboard, and pick it from the "MIDI Keyboard" dropdown. A 37-key
+controller maps 1:1 to the on-screen keys. I use an M-VAVE SMK-37 Pro, since
+37 keys is the closest match to a real harmonium keyboard.
+
 ## Credit & attributions
 
 **Original Web Harmonium:** [Rajaraman Iyer](https://github.com/rajaramaniyer)
