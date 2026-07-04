@@ -530,7 +530,7 @@ body {
     <div class="header">
         <h1>Web Harmonium</h1>
         <div class="model-name">13/4 Scale Changer Model</div>
-        <div class="subtitle">4 Reeds (B-M-M-F) | 11 Stops | 13 Scales | Coupler | 3.5 Octaves | Ready</div>
+        <div class="subtitle">4 Reeds (B-M-M-F) | 11 Stops | 13 Scales | Coupler | 3.5 Octaves | Loading...</div>
     </div>
 
     <div class="wood-panel">
@@ -611,7 +611,7 @@ body {
                 <input type="range" min="-6" max="6" value="0" step="1" class="scale-slider" id="scaleSlider" oninput="onScaleChange()">
                 <div class="scale-ticks" id="scaleTicks"><div class="scale-tick">F#</div><div class="scale-tick">G</div><div class="scale-tick">G#</div><div class="scale-tick">A</div><div class="scale-tick">A#</div><div class="scale-tick">B</div><div class="scale-tick">C</div><div class="scale-tick">C#</div><div class="scale-tick">D</div><div class="scale-tick">D#</div><div class="scale-tick active-tick">E</div><div class="scale-tick">F</div><div class="scale-tick">F#</div></div>
             </div>
-            <div class="scale-display" id="scaleDisplay">E</div>
+            <div class="scale-display" id="scaleDisplay">C</div>
         </div>
 
         <!-- BELLOWS -->
@@ -673,7 +673,7 @@ body {
     </div>
 
     <!-- Notation -->
-    <div class="notation-display" id="notationDisplay">DDṠNDGMMGGSRRRGGMMMPDPMGRSRRPDDDNDPMPMGSRḌRRGGMMMPDMPMGRSRGMPMPDNṠṘṘṘṘĠṘṠṠṘṘĠṀĠĠṘĠṀĠṀṠṘṘṘṘṠNNṠNNNṠṘṠṘṠĠĠṘṘĠĠṘṘṘṘĠṘṠṠṘĠṀĠĠṘĠṀṀNṠĠṘNṠṘṠNṘṠNNNṠṘĠṘṘṘṠṘṠṘṘĠṘṠṘĠĠṘĠṘĠĠṀĠṘĠṀĠṀĠĠṀṀĠṘĠṀṠṠṘṘṠNNṠNṠĠṘṘṘĠṀĠṘṠṠṘNNṠNNṠNṘṠĠṘĠṠṘṠNNṠNDPMMGMDMRDMRMDMDRRRRMDRMDDMRRRRGGGGMMMMPPPPDDDDPPMGRSRGMDRRPMPDDDDNDDNDPMPDDNDPDNNDPMGRGGMPDPMPMRGRRRGRSGPMPGMGMGSRGMGRMDRRDDNDDDNDPMPPDDDNNDDPDNDMPMGRGMPPMGRRRGRGPMDMPGSGMPPMGRMMGRDMRRṂṂ</div>
+    <div class="notation-display" id="notationDisplay"></div>
     <div class="notation-hint">Type notes for notation | Tab = comma | Enter = new line | Delete = clear</div>
 </div>
 
@@ -752,6 +752,10 @@ let scalePosition = 0; // -6 to +6 (13 positions)
 let bellowsPressure = 0.8;
 let notation = '';
 
+// MIDI sustain pedal (CC 64)
+let sustainPedal = false;
+const sustainedNotes = new Set();
+
 // 11 Stops state
 const stops = {
     bass:    false,
@@ -771,8 +775,10 @@ const stops = {
 const droneVoices = {};
 
 // AUDIO INIT
-function initAudio() {
-    if (ctx) return;
+// Runs at page load so the samples download and decode before the first key
+// press. Browsers keep the context suspended until a user gesture;
+// resumeAudio() below unlocks it.
+function setupAudio() {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
 
     masterGain = ctx.createGain();
@@ -810,14 +816,18 @@ function initAudio() {
     tremoloLFO.start();
 
     fetch(SAMPLE_URL)
-        .then(r => r.arrayBuffer())
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
         .then(buf => ctx.decodeAudioData(buf))
         .then(decoded => {
             audioBuffer = decoded;
             document.querySelector('.subtitle').textContent =
                 '4 Reeds (B-M-M-F) | 11 Stops | 13 Scales | Coupler | 3.5 Octaves | Ready';
+            restartDrones(); // drone stops restored from a previous visit start sounding
         })
-        .catch(e => console.error('Sample load failed:', e));
+        .catch(e => {
+            console.error('Sample load failed:', e);
+            document.querySelector('.subtitle').textContent = 'Sound failed to load. Refresh the page to try again.';
+        });
 
     fetch(REVERB_URL)
         .then(r => r.arrayBuffer())
@@ -830,9 +840,17 @@ function initAudio() {
     startBellowsDecay();
 }
 
-document.addEventListener('click', initAudio, { once: true });
-document.addEventListener('keydown', initAudio, { once: true });
-document.addEventListener('touchstart', initAudio, { once: true });
+// Browsers block sound until the user interacts with the page, and mobile
+// Safari can suspend audio again after a phone call or app switch. Any
+// interaction (or returning to the tab) resumes it.
+function resumeAudio() {
+    if (ctx && ctx.state !== 'running') ctx.resume();
+}
+
+document.addEventListener('click', resumeAudio);
+document.addEventListener('keydown', resumeAudio);
+document.addEventListener('touchstart', resumeAudio, { passive: true });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) resumeAudio(); });
 
 // VOICE CREATION
 function createVoice(midiNote, detuneOffset) {
@@ -853,11 +871,13 @@ function createVoice(midiNote, detuneOffset) {
     source.connect(voiceGain);
 
     // If tremolo is on, route through tremolo modulation
+    let tremoloNode = null;
+    let tGain = null;
     if (stops.tremolo) {
-        const tremoloNode = ctx.createGain();
+        tremoloNode = ctx.createGain();
         tremoloNode.gain.value = 1.0;
         // Connect tremolo LFO to this gain node for amplitude modulation
-        const tGain = ctx.createGain();
+        tGain = ctx.createGain();
         tGain.gain.value = TREMOLO_DEPTH;
         tremoloLFO.connect(tGain);
         tGain.connect(tremoloNode.gain);
@@ -867,16 +887,24 @@ function createVoice(midiNote, detuneOffset) {
         voiceGain.connect(masterGain);
     }
 
+    // Unhook per-voice nodes from the long-lived LFOs once the note ends,
+    // otherwise they accumulate for the life of the page
+    source.onended = () => {
+        try { bellowsLFOGain.disconnect(source.detune); } catch (e) {}
+        if (tGain) {
+            try { tremoloLFO.disconnect(tGain); } catch (e) {}
+            tGain.disconnect();
+            tremoloNode.disconnect();
+        }
+    };
+
     source.start(0);
     return { source, voiceGain };
 }
 
 // NOTE ON / OFF (absolute MIDI notes)
-function noteOn(midiNote) {
-    if (!audioBuffer) return;
-    if (midiNote < 20 || midiNote > 108) return;
-    if (activeVoices[midiNote]) return;
-
+// One reed set for a note, per the engaged stops
+function buildVoices(midiNote) {
     const voices = [];
 
     // Bass reed (-12 semitones from note)
@@ -894,17 +922,34 @@ function noteOn(midiNote) {
     // At least one reed must sound
     if (voices.length === 0) voices.push(createVoice(midiNote, 0));
 
-    activeVoices[midiNote] = voices;
+    return voices;
+}
+
+// Coupler companion: the same reed set voiced one octave up
+function buildCouplerVoices(midiNote) {
+    const voices = [];
+    if (stops.bass) voices.push(createVoice(midiNote, 3)); // bass of +12 = original note
+    if (stops.male1) voices.push(createVoice(midiNote + 12, 0));
+    if (stops.male2) voices.push(createVoice(midiNote + 12, MALE2_DETUNE));
+    if (stops.female) voices.push(createVoice(midiNote + 24, -2));
+    if (voices.length === 0) voices.push(createVoice(midiNote + 12, 0));
+    return voices;
+}
+
+function noteOn(midiNote) {
+    if (!audioBuffer) return;
+    if (midiNote < 20 || midiNote > 108) return;
+    if (activeVoices[midiNote]) {
+        // Still sounding only because of the sustain pedal: retrigger it
+        if (!sustainedNotes.has(midiNote)) return;
+        releaseVoice(midiNote);
+    }
+
+    activeVoices[midiNote] = buildVoices(midiNote);
 
     // Coupler: also trigger the note one octave up
     if (stops.coupler && !activeVoices[midiNote + 12]) {
-        const couplerVoices = [];
-        if (stops.bass) couplerVoices.push(createVoice(midiNote, 3)); // bass of +12 = original note
-        if (stops.male1) couplerVoices.push(createVoice(midiNote + 12, 0));
-        if (stops.male2) couplerVoices.push(createVoice(midiNote + 12, MALE2_DETUNE));
-        if (stops.female) couplerVoices.push(createVoice(midiNote + 24, -2));
-        if (couplerVoices.length === 0) couplerVoices.push(createVoice(midiNote + 12, 0));
-        activeVoices[midiNote + 12] = couplerVoices;
+        activeVoices[midiNote + 12] = buildCouplerVoices(midiNote);
         activeVoices[midiNote + 12]._coupler = true; // mark as coupler-generated
         highlightKey(midiNote + 12, true);
     }
@@ -915,14 +960,32 @@ function noteOn(midiNote) {
 }
 
 function noteOff(midiNote) {
+    // Sustain pedal down: keep the note (and its coupler companion) sounding
+    if (sustainPedal && activeVoices[midiNote]) {
+        sustainedNotes.add(midiNote);
+        if (activeVoices[midiNote + 12] && activeVoices[midiNote + 12]._coupler) {
+            sustainedNotes.add(midiNote + 12);
+        }
+        return;
+    }
+
     releaseVoice(midiNote);
 
     // Coupler: also release the octave-up note if it was coupler-generated
-    if (stops.coupler && activeVoices[midiNote + 12] && activeVoices[midiNote + 12]._coupler) {
+    if (activeVoices[midiNote + 12] && activeVoices[midiNote + 12]._coupler) {
         releaseVoice(midiNote + 12);
     }
 
     updateActiveNotesDisplay();
+}
+
+function setSustainPedal(down) {
+    sustainPedal = down;
+    if (!down) {
+        sustainedNotes.forEach(n => releaseVoice(n));
+        sustainedNotes.clear();
+        updateActiveNotesDisplay();
+    }
 }
 
 function releaseVoice(midiNote) {
@@ -937,10 +1000,22 @@ function releaseVoice(midiNote) {
         v.source.stop(now + RELEASE_TIME + 0.01);
     });
     delete activeVoices[midiNote];
+    sustainedNotes.delete(midiNote);
     highlightKey(midiNote, false);
 }
 
+// Instant kill (no release tail), used when re-voicing after a stop change
+function killVoices(voices) {
+    voices.forEach(v => {
+        if (v && v.voiceGain) {
+            v.voiceGain.gain.setValueAtTime(0, ctx.currentTime);
+            v.source.stop(ctx.currentTime + 0.01);
+        }
+    });
+}
+
 function stopAllNotes() {
+    sustainedNotes.clear();
     Object.keys(activeVoices).forEach(id => releaseVoice(parseInt(id)));
     updateActiveNotesDisplay();
     document.querySelectorAll('.key.active').forEach(el => el.classList.remove('active'));
@@ -986,20 +1061,23 @@ function updateBellowsVisual() {
 }
 
 document.getElementById('bellowsVisual').addEventListener('mousedown', () => {
-    initAudio();
+    resumeAudio();
     bellowsPressure = 1.0;
     updateBellowsVisual();
 });
 
 // 11 STOPS
+function setStopVisual(name, on) {
+    const cap = name.charAt(0).toUpperCase() + name.slice(1);
+    const knob = document.getElementById('stop' + cap);
+    const label = document.getElementById('lbl' + cap);
+    if (knob) knob.className = 'stop-knob ' + (on ? 'out' : 'in');
+    if (label) label.className = 'stop-label' + (on ? ' active-label' : '');
+}
+
 function toggleStop(name) {
     stops[name] = !stops[name];
-
-    // Update knob visual
-    const knob = document.getElementById('stop' + name.charAt(0).toUpperCase() + name.slice(1));
-    const label = document.getElementById('lbl' + name.charAt(0).toUpperCase() + name.slice(1));
-    if (knob) knob.className = 'stop-knob ' + (stops[name] ? 'out' : 'in');
-    if (label) label.className = 'stop-label' + (stops[name] ? ' active-label' : '');
+    setStopVisual(name, stops[name]);
 
     // Handle drone stops
     if (name.startsWith('drone')) {
@@ -1016,43 +1094,25 @@ function toggleStop(name) {
         return;
     }
 
-    // Reed/tremolo change: re-voice currently playing notes
-    const playing = Object.keys(activeVoices).map(Number);
-    playing.forEach(midiNote => {
+    // Reed/tremolo change: re-voice currently playing notes.
+    // Coupler companions are killed first, then rebuilt alongside their base
+    // note, so a companion is never dropped or left highlighted.
+    Object.keys(activeVoices).map(Number).forEach(midiNote => {
         const voices = activeVoices[midiNote];
-        const wasCoupler = voices && voices._coupler;
-        if (voices) {
-            voices.forEach(v => {
-                if (v && v.voiceGain) {
-                    v.voiceGain.gain.setValueAtTime(0, ctx.currentTime);
-                    v.source.stop(ctx.currentTime + 0.01);
-                }
-            });
+        if (voices && voices._coupler) {
+            killVoices(voices);
+            delete activeVoices[midiNote];
+            highlightKey(midiNote, false);
         }
+    });
+    Object.keys(activeVoices).map(Number).forEach(midiNote => {
+        killVoices(activeVoices[midiNote]);
         delete activeVoices[midiNote];
-
-        if (!wasCoupler) {
-            // Re-create voices with new stop config
-            const newVoices = [];
-            if (stops.bass) newVoices.push(createVoice(midiNote - 12, 3));
-            if (stops.male1) newVoices.push(createVoice(midiNote, 0));
-            if (stops.male2) newVoices.push(createVoice(midiNote, MALE2_DETUNE));
-            if (stops.female) newVoices.push(createVoice(midiNote + 12, -2));
-            if (newVoices.length === 0) newVoices.push(createVoice(midiNote, 0));
-            activeVoices[midiNote] = newVoices;
-
-            // Re-create coupler companion if coupler is on
-            if (stops.coupler && !activeVoices[midiNote + 12]) {
-                const cVoices = [];
-                if (stops.bass) cVoices.push(createVoice(midiNote, 3));
-                if (stops.male1) cVoices.push(createVoice(midiNote + 12, 0));
-                if (stops.male2) cVoices.push(createVoice(midiNote + 12, MALE2_DETUNE));
-                if (stops.female) cVoices.push(createVoice(midiNote + 24, -2));
-                if (cVoices.length === 0) cVoices.push(createVoice(midiNote + 12, 0));
-                activeVoices[midiNote + 12] = cVoices;
-                activeVoices[midiNote + 12]._coupler = true;
-                highlightKey(midiNote + 12, true);
-            }
+        activeVoices[midiNote] = buildVoices(midiNote);
+        if (stops.coupler && !activeVoices[midiNote + 12]) {
+            activeVoices[midiNote + 12] = buildCouplerVoices(midiNote);
+            activeVoices[midiNote + 12]._coupler = true;
+            highlightKey(midiNote + 12, true);
         }
     });
 
@@ -1071,7 +1131,7 @@ const DRONE_SEMITONES = {
 };
 
 function handleDroneToggle(name) {
-    if (!ctx || !audioBuffer) { stops[name] = false; return; }
+    if (!ctx || !audioBuffer) { stops[name] = false; setStopVisual(name, false); return; }
 
     if (stops[name]) {
         // Start drone
@@ -1083,6 +1143,7 @@ function handleDroneToggle(name) {
         source.loopStart = 0.5;
         source.detune.value = (midiNote - SAMPLE_ROOT) * 100;
         bellowsLFOGain.connect(source.detune);
+        source.onended = () => { try { bellowsLFOGain.disconnect(source.detune); } catch (e) {} };
 
         const voiceGain = ctx.createGain();
         voiceGain.gain.setValueAtTime(0, ctx.currentTime);
@@ -1225,12 +1286,12 @@ function buildKeyboard() {
             el.appendChild(dot);
         }
 
-        el.addEventListener('mousedown', (e) => { e.preventDefault(); initAudio(); noteOn(midi); });
+        el.addEventListener('mousedown', (e) => { e.preventDefault(); resumeAudio(); noteOn(midi); });
         el.addEventListener('mouseup', () => noteOff(midi));
         el.addEventListener('mouseleave', () => noteOff(midi));
-        el.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); noteOn(midi); }, { passive: false });
-        el.addEventListener('touchend', (e) => { e.preventDefault(); noteOff(midi); });
-        el.addEventListener('touchcancel', () => noteOff(midi));
+        // Dragging across keys with the button held glides between notes
+        el.addEventListener('mouseenter', (e) => { if (e.buttons & 1) noteOn(midi); });
+        // Touch is handled on the keyboard itself (see below) so fingers can glide
 
         kb.appendChild(el);
     }
@@ -1240,6 +1301,49 @@ function highlightKey(midiNote, on) {
     const el = document.querySelector(`.key[data-midi="${midiNote}"]`);
     if (el) { if (on) el.classList.add('active'); else el.classList.remove('active'); }
 }
+
+// TOUCH INPUT
+// Handled on the keyboard element (which survives rebuilds) rather than on
+// each key, so a finger can glide from key to key like on a real harmonium.
+const touchNotes = {}; // touch identifier -> sounding midi note
+
+function midiFromTouch(t) {
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const key = el && el.closest('.key');
+    return key ? parseInt(key.dataset.midi) : null;
+}
+
+const keyboardEl = document.getElementById('keyboard');
+
+keyboardEl.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    resumeAudio();
+    for (const t of e.changedTouches) {
+        const midi = midiFromTouch(t);
+        if (midi !== null) { touchNotes[t.identifier] = midi; noteOn(midi); }
+    }
+}, { passive: false });
+
+keyboardEl.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    for (const t of e.changedTouches) {
+        const prev = touchNotes[t.identifier];
+        const midi = midiFromTouch(t);
+        if (midi === prev) continue;
+        if (prev !== undefined) noteOff(prev);
+        if (midi !== null) { touchNotes[t.identifier] = midi; noteOn(midi); }
+        else delete touchNotes[t.identifier];
+    }
+}, { passive: false });
+
+function onKeyboardTouchEnd(e) {
+    for (const t of e.changedTouches) {
+        const midi = touchNotes[t.identifier];
+        if (midi !== undefined) { noteOff(midi); delete touchNotes[t.identifier]; }
+    }
+}
+keyboardEl.addEventListener('touchend', onKeyboardTouchEnd);
+keyboardEl.addEventListener('touchcancel', onKeyboardTouchEnd);
 
 function updateActiveNotesDisplay() {
     const container = document.getElementById('activeNotes');
@@ -1277,7 +1381,7 @@ function onReverbMixChange() {
 // KEYBOARD INPUT
 window.addEventListener('keydown', (e) => {
     if (e.repeat) return;
-    initAudio();
+    resumeAudio();
     const midiNote = keyboardMap[e.key];
     if (midiNote !== undefined) { e.preventDefault(); noteOn(midiNote); }
 });
@@ -1335,11 +1439,13 @@ function initMIDI() {
 }
 
 function onMIDIMessage(msg) {
-    const [cmd, note, vel] = msg.data;
+    const [status, note, vel] = msg.data;
     const select = document.getElementById('midiDevices');
     if (msg.target.id !== select.value) return;
+    const cmd = status & 0xF0; // strip the channel so keyboards on any MIDI channel work
     if (cmd === 144 && vel > 0) noteOn(note);
     else if (cmd === 128 || (cmd === 144 && vel === 0)) noteOff(note);
+    else if (cmd === 176 && note === 64) setSustainPedal(vel >= 64); // sustain pedal
     else if (cmd === 176 && note === 7) {
         document.getElementById('volumeSlider').value = Math.round((100 * vel) / 127);
         onVolumeChange();
@@ -1347,7 +1453,13 @@ function onMIDIMessage(msg) {
 }
 
 // PERSISTENCE
+// Restoring a control fires its change handler, which calls saveSettings.
+// Without this guard, that save runs mid-restore and overwrites the stored
+// stops and scale with defaults before they have been read back.
+let settingsLoading = false;
+
 function saveSettings() {
+    if (settingsLoading) return;
     try {
         localStorage.setItem('wh2.vol', document.getElementById('volumeSlider').value);
         localStorage.setItem('wh2.rev', useReverb);
@@ -1358,6 +1470,7 @@ function saveSettings() {
 }
 
 function loadSettings() {
+    settingsLoading = true;
     try {
         const vol = localStorage.getItem('wh2.vol');
         if (vol !== null) { document.getElementById('volumeSlider').value = vol; onVolumeChange(); }
@@ -1378,23 +1491,24 @@ function loadSettings() {
         const st = localStorage.getItem('wh2.stops');
         if (st) {
             const saved = JSON.parse(st);
+            // Restored drone stops start sounding once the sample has decoded
+            // (see restartDrones() in the sample load handler)
             Object.keys(saved).forEach(k => {
                 if (k in stops) {
                     stops[k] = saved[k];
-                    const knob = document.getElementById('stop' + k.charAt(0).toUpperCase() + k.slice(1));
-                    const lbl = document.getElementById('lbl' + k.charAt(0).toUpperCase() + k.slice(1));
-                    if (knob) knob.className = 'stop-knob ' + (saved[k] ? 'out' : 'in');
-                    if (lbl) lbl.className = 'stop-label' + (saved[k] ? ' active-label' : '');
+                    setStopVisual(k, saved[k]);
                 }
             });
         }
     } catch(e) {}
+    settingsLoading = false;
 }
 
 // INIT
 buildScaleTicks();
 buildKeyboard();
 updateDroneLabels();
+setupAudio();
 window.addEventListener('resize', buildKeyboard);
 </script>
 

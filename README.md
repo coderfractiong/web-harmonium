@@ -21,7 +21,8 @@ instrument rather than a synth.
 Open the site in Chrome or Edge (Web MIDI support is required), plug in any
 MIDI keyboard, and pick it from the "MIDI Keyboard" dropdown. A 37-key
 controller maps 1:1 to the on-screen keys. I use an M-VAVE SMK-37 Pro, since
-37 keys is the closest match to a real harmonium keyboard.
+37 keys is the closest match to a real harmonium keyboard. Any MIDI channel
+works, and a sustain pedal holds notes as you would expect.
 
 ## Credit & attributions
 
